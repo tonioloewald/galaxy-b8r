@@ -1,3 +1,5 @@
+const {gravity, blackbody} = require('../galaxy/astrophysics');
+
 function Planet( name, seed, orbitalRadius, insolation ){
 	this.name = name;
 	this.seed = seed;
@@ -7,7 +9,7 @@ function Planet( name, seed, orbitalRadius, insolation ){
 	return this;
 }
 
-if (module.exports) {
+if (module) {
   module.exports = Planet;
 }
 
@@ -16,8 +18,8 @@ Planet.prototype.detail = function(){
 			detail = {},
 			template;
 	detail.name = this.name;
-	detail.orbitalRadius = this.orbitalRadius;
-	detail.insolation = this.insolation;
+	detail.orbitalRadius = this.orbitalRadius.toFixed(2);
+	detail.insolation = this.insolation.toFixed(2);
 	detail.blackbodyK = blackbody( detail.insolation );
 	
 	template = pseudoRandom.pick(planetTypeData,[detail.insolation * 100,10,1]);
@@ -28,8 +30,7 @@ Planet.prototype.detail = function(){
 	detail.gravity = gravity( detail.radius, detail.density );
 	detail.hydrographics = template.hydrographics( pseudoRandom, detail.insolation, detail.radius, detail.density );
 	detail.atmosphere = template.atmosphere( pseudoRandom, detail.insolation, detail.radius, detail.density, detail.hydrographics );
-	detail.HI = template.HI( detail.insolation, detail.radius, detail.density, detail.hydrographics, detail.atmosphere );
-	
+	Object.assign(detail, template.HI( detail.insolation, detail.radius, detail.density, detail.hydrographics, detail.atmosphere ));
 	return detail;
 };
 

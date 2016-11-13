@@ -56,6 +56,13 @@ function galaxy(seed, number_of_stars){
     var s = Math.log(star._detail.luminosity) + 8;
     s = Math.max(Math.min(s, 20), 2);
     const color = star._detail.template.color;
+    star._x = x.toFixed(1);
+    star._y = y.toFixed(1);
+    star._z = z.toFixed(1);
+    star._cx = (star.position.x * 50000).toFixed(2);
+    star._cy = (star.position.y * 50000).toFixed(2);
+    star._cz = (star.position.z * 50000).toFixed(2);
+    star._r = s;
     star._star_style = {
       width: s + 'px',
       height: s + 'px',

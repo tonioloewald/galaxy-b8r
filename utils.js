@@ -3,6 +3,11 @@ Math.clamp = function(a, min, max){
 	return a < min ? min : ( a > max ? max : a );
 };
 
+// linear interpolation from a to b by parameter t
+Math.lerp = function(a, b, t) {
+  return a * (1 - t) + b * t;
+}
+
 // dumb ass roman numeral generator for naming planets after their star
 window.romanNumeral = function( n ){
 	var units = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"];

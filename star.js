@@ -1,3 +1,5 @@
+const Planet = require('../galaxy/planet');
+
 function Star( name, seed, position ){
 	this.name = name;
 	this.seed = seed;
@@ -42,6 +44,10 @@ Star.prototype.planets = function(){
 	}
 	
 	return planets;
+}
+
+Star.prototype.planetsDetail = function() {
+  return this.planets().map(planet => planet.detail());
 }
 
 Star.prototype.description = function(){

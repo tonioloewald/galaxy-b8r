@@ -86,6 +86,50 @@ function fixed_value( val ){
 	}
 }
 
+var atmosphereData = {
+  Breathable: {albedo: 0.2, density: 1},
+  Filterable: {albedo: 0.3, density: 1},
+  Inert: {albedo: 0.1, density: 0.5},
+  Corrosive: {albedo: 0.5, density: 2},
+  Toxic: {albedo: 0.4, density: 1.5},
+  Trace: {albedo: 0.05, density: 0.1},
+  Crushing: {albedo: 0.8, density: 100},
+}
+
+function HI( insolation, radius, density, hydrographics, atmosphere ){
+  const g = gravity(radius, density).toFixed(2);
+  const {albedo} = atmosphereData[atmosphere];
+  const tempK = blackbody( insolation, albedo + hydrographics * 0.002 ).toFixed(1);
+  const tempC = (tempK - 275.15).toFixed(1);
+  var temp;
+  if(tempC < -150) {
+    temp = "frigid";
+  } else if (tempC < -70) {
+    temp = "very cold";
+  } else if (tempC < -10) {
+    temp = "cold";
+  } else if (tempC < 30) {
+    temp = "temperate";
+  } else if (tempC < 60) {
+    temp = "hot";
+  } else if (tempC < 120) {
+    temp = "very hot";
+  } else {
+    temp = "inferno";
+  }
+  var data;
+  if( atmosphere === "Breathable" && hydrographics > 0 && g < 1.25 && ['cold','hot','temperate'].indexOf(temp) > -1 ){
+    data = {HI: 1, description: 'earthlike'};
+  } else if ( ['Breathable', 'Filterable'].indexOf(atmosphere) > -1 && g < 2 && ['inferno', 'frigid'].indexOf(temp) === -1 ){
+    data = {HI: 2, description: 'survivable'};
+  } else if ( atmosphere === "Corrosive" || g > 3 || ['inferno', 'frigid'].indexOf(temp) > -1 ){
+    data = tempC > 800 ? {HI: 5, description: 'inimical'} : {HI: 1, description: 'robot accessible'};
+  } else {
+    data = {HI: 3, description: 'EVA possible'};
+  }
+  return Object.assign(data, {g, albedo, tempC, temp});
+}
+
 var planetTypeData = [
 	{
 		classification: "rocky",
@@ -94,7 +138,7 @@ var planetTypeData = [
 		hydrographics: function( pnrg, insolation, radius, density ){
 			var g = gravity( radius, density ),
 					tempK = blackbody( insolation, 0 );
-			return Math.clamp(pnrg.realRange(-50, 150 - Math.abs(tempK - 270)) * g - Math.abs( density - 5.5 ) * 10, 0, 100);
+			return Math.clamp(pnrg.realRange(-50, 150 - Math.abs(tempK - 270)) * g - Math.abs( density - 5.5 ) * 10, 0, 100).toFixed(0);
 		},
 		atmosphere: function( pnrg, insolation, radius, density, hydrographics ){
 			var g = gravity( radius, density );
@@ -104,19 +148,7 @@ var planetTypeData = [
 				return pnrg.pick(['Breathable', 'Filterable', 'Inert', 'Toxic', 'Corrosive', 'Trace'], [1,2,3,4,5,5]);
 			}
 		},
-		HI: function( insolation, radius, density, hydrographics, atmosphere ){
-			var g = gravity( radius, density ),
-					tempK = blackbody( insolation, 0 );
-			if( atmosphere === "Breathable" && hydrographics > 0 && g < 1.25 && tempK > 230 && tempK < 280 ){
-				return 1;
-			} else if ( (atmosphere === "Breathable" || atmosphere === 'Filterable') && g < 2 && tempK > 200 && tempK < 310 ){
-				return 2;
-			} else if ( atmosphere === "Corrosive" || g > 2 || tempK > 400 ){
-				return tempK > 1000 ? 5 : 4;
-			} else {
-				return 3;
-			}
-		}
+		HI
 	},
 	{
 		classification: "gas giant",
@@ -124,7 +156,7 @@ var planetTypeData = [
 		density: [0.6, 2.0],
 		hydrographics: fixed_value(0),
 		atmosphere: fixed_value("Crushing"),
-		HI: fixed_value(4)
+		HI
 	},
 	{
 		classification: "brown dwarf",
@@ -132,12 +164,13 @@ var planetTypeData = [
 		density: [0.6, 2.0],
 		hydrographics: fixed_value(0),
 		atmosphere: fixed_value("Crushing"),
-		HI: fixed_value(5)
+		HI
 	}
 ];
 
 if (module) {
   module.exports = {
+    gravity,
     blackbody,
     starTypeData,
     planetTypeData

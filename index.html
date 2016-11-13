@@ -8,8 +8,27 @@
     <link rel="apple-touch-icon" href="images/icon.png"/>
     <link href="../galaxy/galaxy.css" type="text/css" rel="stylesheet">
   </head>
-  </body>
-    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;">
+  <body data-event="mouseup:galaxy-controls.deselect">
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: scroll;">
+      <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
+        <circle
+          class="star"
+          data-list="galaxy.stars" cx="1" cy="1" r="2"
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color" 
+          data-event="mouseup:galaxy-controls.pick_star"
+        />
+        <line 
+          class="y-position"
+          x1="0" y1="-1000" x2="2000" y2="-1000"
+          stroke-width="1" stroke="white"
+        />
+        <line 
+          class="x-position"
+          x1="-1000" y1="0" x2="-1000" y2="2000"
+          stroke-width="1" stroke="white"
+        />
+      </svg>
+      <!--
       <div class="tilt" style="position: absolute; top: 50%; left: 50%; width: 2000px; height: 2000px; transform: translate(-50%,-50%) scale3d(0.4,0.4,0.4)">
         <div class="rotate" style="width: 2000px; height: 2000px;">
           <div 
@@ -23,6 +42,7 @@
           </div>
         </div>
       </div>
+      -->
     </div>
     <form id="settings" name="settings" onSubmit="return false;">
       <h3>Galaxy Generator</h3>
@@ -32,9 +52,67 @@
         <button data-event="click:galaxy-controls.update">Update</button>
       </p>
     </form>
-    <div class="list">
-      <div class="star_listing" data-list="galaxy.stars">
-        <span data-bind="text=.name" style="color: white"></span>
+    <div class="container">
+      <div class="list">
+        <div 
+          class="star_listing"
+          data-list="galaxy.stars"
+          data-event="mouseup:galaxy-controls.pick_star"
+        >
+          <span data-bind="text=.name"></span>
+        </div>
+      </div>
+      <div class="system" style="display: none; overflow-y: scroll; overflow-x: hidden">
+        <div style="display: flex;">
+          <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="0" cy="0" r="2"
+              stroke-width="4"
+              stroke-opacity="0.5"
+              data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
+              data-event="mouseup:galaxy-controls.pick_star"
+            />
+          </svg>
+          <div class="data">
+            <h2 data-bind="text=system.star.name">Star Name</h2>
+            <p>
+              Spectral Class
+              <span data-bind="text=system.star._detail.spectralType;style(color)=system.star._detail.template.color">X0</span>
+            </p>
+            <p>(<span data-bind="text=system.star._cx">x</span> <span data-bind="text=system.star._cy">y</span> <span data-bind="text=system.star._cz">z</span>)</p>
+          </div>
+        </div>
+        <div class="planet" data-list="system.planets">
+          <div class="data" style="z-index: 10">
+            <h3>
+              <span data-bind="text=.name">
+                Planet Name
+              </span>
+              &mdash;
+              <span style="font-size: 12px; font-style: italic" data-bind="text=.description">
+                description
+              </span>
+            </h3>
+            <p>
+              <span data-bind="text=.g">1</span>g,
+              Orbit <span data-bind="text=.orbitalRadius">1</span> AUs,
+              Insolation <span data-bind="text=.insolation">1</span>
+            </p>
+            <p>
+              <span data-bind="text=.atmosphere">atmosphere</span>,
+              <span data-bind="text=.tempC">xx</span>°C
+              (<span data-bind="text=.temp"></span>),
+              <span data-bind="text=.hydrographics">0</span>% water
+            </p>
+          </div>
+          <svg style="width: 320px; height: 64px;" viewBox="0 0 275000 55000" xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="275000" cy="27500" r="2"
+              data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
+              data-event="mouseup:galaxy-controls.pick_star"
+            />
+          </svg>
+        </div>
       </div>
     </div>
     <script src="../BOM/require.js"></script>
@@ -58,21 +136,116 @@
           Object.assign(settings, hash);
         } catch(e){}
       }
-      BOM.register('settings', settings);
-      BOM.register('galaxy-controls', {
-        update: () => window.location.hash = JSON.stringify(settings),
-        pick_star: (evt) => console.log(BOM.getInstance(evt.target))
-      });
       
-      window.location.hash = JSON.stringify(settings);
-      
-      window.addEventListener('hashchange', generate);
-      
-      function generate() {
-        BOM.register('galaxy', galaxy(parseInt(settings.seed, 10), parseInt(settings.count, 10)));
+      function update () {
+        window.location.hash = JSON.stringify(settings);
       }
       
-      generate();    
+      function pick_star (evt) {
+        const star = BOM.getInstance(evt.target);
+        if( !evt.target.matches('.current') ) {
+          settings.star = BOM.getByPath('galaxy', 'stars').indexOf(star);
+        }  else {
+          settings.zoom = 500;
+        }
+        update();
+      }
+      
+      function deselect() {
+        delete(settings.star);
+        delete(settings.zoom);
+        update();
+      }
+      
+      BOM.register('settings', settings);
+      BOM.register('galaxy-controls', {update, pick_star, deselect});
+      
+      const last_render_params = {};
+      const xPos = BOM.findOne('.x-position');
+      const yPos = BOM.findOne('.y-position');
+      const systemInfo = BOM.findOne('.system');
+      const galaxyFrame = BOM.findOne('.galaxy-frame');
+      function render() {
+        if(
+          last_render_params.seed !== settings.seed || 
+          last_render_params.count !== settings.count
+        ) {
+          BOM.register('galaxy', galaxy(parseInt(settings.seed, 10), parseInt(settings.count, 10)));
+        }
+        BOM.find('.current')
+           .forEach(elt => elt.classList.remove('current'));
+        if(settings.star === undefined) {
+          [systemInfo, xPos, yPos].forEach(elt => BOM.hide(elt));
+        } else if (
+          typeof settings.star === 'number' && 
+          settings.star !== last_render_params.star
+        ) {
+          const star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          const planets = star.planetsDetail();
+          console.log(star, planets);
+          BOM.register('system', {star, planets});
+          BOM.find('[data-list-instance="galaxy.stars[' + settings.star + ']"]')
+             .forEach(elt => {
+                elt.classList.add('current');
+                const y = elt.offsetTop - elt.parentElement.scrollTop;
+                if(y < 0 || y + elt.offsetHeight > elt.parentElement.offsetHeight) {
+                  elt.scrollIntoView({behavior: 'smooth'});
+                }
+              });
+          xPos.setAttribute('x1', star._x);
+          xPos.setAttribute('x2', star._x);
+          yPos.setAttribute('y1', star._y);
+          yPos.setAttribute('y2', star._y);
+          [systemInfo, xPos, yPos].forEach(elt => BOM.show(elt));
+        }        
+        if (settings.zoom) {
+          const star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          settings.x = star._x - settings.zoom * 0.75;
+          settings.y = star._y - settings.zoom * 0.5;
+          changeViewBox();
+        } else {
+          changeViewBox(0, 0, 2000);
+        }
+        Object.assign(last_render_params, settings);
+      }
+      
+      function changeViewBox() {
+        var x = 0, y = 0, w = 2000;
+        if(settings.zoom) {
+          x = settings.x;
+          y = settings.y;
+          w = settings.zoom;
+        }
+        /*
+        galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
+        return;
+        */
+        const [x0, y0, w0] = galaxyFrame.getAttribute('viewBox').split(' ');
+        
+        const duration = 500;
+        const animationEnds = Date.now() + duration;
+        
+        function iterate() {
+          if (Date.now() > animationEnds) {
+            console.log('done changing viewbox');
+            galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
+          } else {
+            var t = 1 - (animationEnds - Date.now()) / duration;
+            t = (Math.sin((t - 0.5) * Math.PI) + 1) * 0.5;
+            const xt = Math.lerp(x0, x, t);
+            const yt = Math.lerp(y0, y, t);
+            const wt = Math.lerp(w0, w, t);
+            galaxyFrame.setAttribute('viewBox', `${xt} ${yt} ${wt} ${wt}`);
+            requestAnimationFrame(iterate);
+          }
+        }
+        
+        requestAnimationFrame(iterate);
+      }
+      
+      render();  
+      
+      window.addEventListener('hashchange', render);  
     </script>
   </body>
 </html>

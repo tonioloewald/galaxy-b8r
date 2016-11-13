@@ -35,7 +35,7 @@ function random_name( PRNG, number_of_syllables, allow_second_name, allow_second
       }
       break;
   }
-  return name;
+  return name.capitalize();
 }
 
 if (module) {
