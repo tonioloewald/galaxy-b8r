@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Galaxy Generator</title>
+    <meta name="viewport" content="width=768, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="images/icon.png"/>
+    <link href="../galaxy/galaxy.css" type="text/css" rel="stylesheet">
+  </head>
+  </body>
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;">
+      <div class="tilt" style="position: absolute; top: 50%; left: 50%; width: 2000px; height: 2000px; transform: translate(-50%,-50%) scale3d(0.4,0.4,0.4)">
+        <div class="rotate" style="width: 2000px; height: 2000px;">
+          <div 
+            class="star"
+            data-list="galaxy.stars"
+            data-bind="style(transform)=._transform"
+            data-event="mouseup:galaxy-controls.pick_star"
+          >
+            <div style="background: white; border-radius: 100px;" data-bind="style=._star_style">&nbsp;</span>
+            <span class="name" data-bind="text=.name">name</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form id="settings" name="settings" onSubmit="return false;">
+      <h3>Galaxy Generator</h3>
+      <p>Seed: <input type="number" data-bind="value=settings.seed" /></p>
+      <p>Total: <input type="number" data-bind="value=settings.count" /></p>
+      <p style="text-align: right">
+        <button data-event="click:galaxy-controls.update">Update</button>
+      </p>
+    </form>
+    <div class="list">
+      <div class="star_listing" data-list="galaxy.stars">
+        <span data-bind="text=.name" style="color: white"></span>
+      </div>
+    </div>
+    <script src="../BOM/require.js"></script>
+    <script>
+      const BOM = require('../BOM/bom');
+      require('../galaxy/utils');
+      require('../galaxy/iter');
+      const MersenneTwister = require('../galaxy/mersenne_twister');
+      const badwords = require('../galaxy/badwords');
+      const PRNG = require('../galaxy/prng');
+      const {blackbody, starTypeData, planetTypeData} = require('../galaxy/astrophysics');
+      const Star = require('../galaxy/star');
+      const Planet = require('../galaxy/planet');
+      const random_name = require('../galaxy/random_name');
+      const galaxy = require('../galaxy/galaxy');
+      
+      const settings = {count: 1000, seed: 1234};
+      if (window.location.hash) {
+        try {
+          var hash = JSON.parse(window.location.hash.substr(1));
+          Object.assign(settings, hash);
+        } catch(e){}
+      }
+      BOM.register('settings', settings);
+      BOM.register('galaxy-controls', {
+        update: () => window.location.hash = JSON.stringify(settings),
+        pick_star: (evt) => console.log(BOM.getInstance(evt.target))
+      });
+      
+      window.location.hash = JSON.stringify(settings);
+      
+      window.addEventListener('hashchange', generate);
+      
+      function generate() {
+        BOM.register('galaxy', galaxy(parseInt(settings.seed, 10), parseInt(settings.count, 10)));
+      }
+      
+      generate();    
+    </script>
+  </body>
+</html>

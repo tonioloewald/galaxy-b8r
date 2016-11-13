@@ -1,0 +1,78 @@
+// standard clamp function -- clamps a value into a range
+Math.clamp = function(a, min, max){
+	return a < min ? min : ( a > max ? max : a );
+};
+
+// dumb ass roman numeral generator for naming planets after their star
+window.romanNumeral = function( n ){
+	var units = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"];
+	
+	if( n == 0 ){
+	    return "";
+	} else if( n < 0 || n >= 20 ){
+		return n;
+	} else if( n >= 10 ){
+		return "x" + romanNumeral(n-10);
+	} else {
+		return units[n-1];
+	}
+}
+
+// check to see if there's a builtin function that does this
+Array.prototype.insertAt = function( where, what ){
+	if( where < 0 ){
+		this.splice(0,0,what);
+	} else {
+		var tail = this.splice( where );
+		this.push( what )
+		for( var i = 0; i < tail.length; i++ ){
+			this.push( tail[i] );
+		}
+	}
+}
+
+// capitalizes first character of a string
+String.prototype.capitalize = function(){
+	if( this ){
+		return this.substr(0,1).toUpperCase() + this.substr(1);
+	} else {
+		return '';
+	}
+}
+
+// renders an object / array as HTML
+Object.prototype.toHTML = function( recurse ){
+	var html = '';
+	for( var key in this ){
+		var label = key.replace(/([a-z])([A-Z])/g, '$1 $2').capitalize();
+		
+		switch( typeof( this[key] ) ){
+			case 'string':
+				html += '<b>' + label + '</b>: ' + this[key] + '<br/>\n';
+				break;
+			case 'number':
+				if( this[key] % 1 === 0 ){
+					html += '<b>' + label + '</b>: ' + this[key] + '<br/>\n';
+				} else {
+					html += '<b>' + label + '</b>: ' + this[key].toFixed(2) + '<br/>\n';
+				}
+				break;
+			case 'object':
+				if( recurse ){
+				    html += '<h4>' + label + '</h4>\n';
+					if( this[key] != null ){
+						var obj = this[key];
+						if( obj.length !== undefined ){
+							html += obj.toHTML( recurse );
+						} else {
+							html += '<div class="subrecord">' + obj.toHTML( recurse ) + '</div>';
+						}
+					}
+				}
+				break;
+		}
+	}
+	return html;
+}
+
+Array.prototype.toHTML = Object.prototype.toHTML;
