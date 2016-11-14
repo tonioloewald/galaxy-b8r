@@ -23,12 +23,12 @@ function blackbody( insolation, albedo ){
 var starTypeData = {
 	"O": {
 		luminosity: 50000,
-		color: 'rgb(192,128,255)',
+		color: 'rgb(255,192,255)',
 		planets: [0,3]
 	},
 	"B": {
 		luminosity: 15000,
-		color: 'rgb(128,192,255)',
+		color: 'rgb(192,160,255)',
 		planets: [1,5]
 	},
 	"A": {
@@ -38,28 +38,28 @@ var starTypeData = {
 	},
 	"F": {
 		luminosity: 2.5,
-		color: 'rgb(220,255,192)',
+		color: 'rgb(160,255,128)',
 		planets: [1,11]
 	},
 	"G": {
 		luminosity: 1,
-		color: 'rgb(255,192,64)',
+		color: 'rgb(255,255,64)',
 		planets: [1,19]
 	},
 	"K": {
 		luminosity: 0.25,
-		color: 'rgb(255,128,64)',
+		color: 'rgb(255,192,64)',
 		planets: [1,9]
 	},
 	"M": {
 		luminosity: 0.05,
-		color: 'rgb(255,100,0)',
+		color: 'rgb(255,64,0)',
 		planets: [1,5]
 	},
 	"black hole": {
-	    luminosity: 100000,
-	    color: 'rgb(128,0,64)',
-	    planets: [0,0]
+    luminosity: 100000,
+    color: 'rgb(128,0,64)',
+    planets: [0,0]
 	}
 };
 

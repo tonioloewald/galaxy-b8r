@@ -13,7 +13,7 @@ body {
   margin: 0;
   padding: 0;
   
-  background-color: #102;
+  background-color: #213;
 }
 a {
   text-decoration: none;
@@ -39,6 +39,9 @@ input, button {
   color: white;
   background-color: rgba(0,0,0,0.5);
 }
+button:disabled {
+  opacity: 0.5;
+}
 input, button {
   font-size: 13px;
   border: 1px solid rgba(255,255,255,0.25);
@@ -52,28 +55,22 @@ button:active {
 button {
   border-radius: 3px; 
 }
-.topright {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
-.subrecord {
-  display: inline-block;
-  background-color: rgba(0,0,0,0.5);
-  margin: 4px;
-  padding: 4px;
-  font-size: 11px;
-}
-form, #output, #hint {
+form {
   position: absolute;
   color: white;
-  padding: 2px 6px;
+  padding: 4px 8px;
   background-color: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.5);
 }
 #settings {
-  top: 4px;
-  right: 4px;
+  bottom: 0;
+  right: 0;
   overflow: hidden;
 }
 .star {
@@ -108,22 +105,64 @@ form, #output, #hint {
   stroke-width: 16;
 }
 
-.container {
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  bottom: 0; 
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: rgba(0,0,0,0.75);
+  padding: 2px;
   display: flex;
-  background: rgba(0,0,0,0.5); 
   color: white;
 }
 
+.toolbar .icon {
+  max-height: 24px;
+  max-width: 24px;
+}
+
+.toolbar > label .icon {
+  margin: -6px 0;
+}
+
+.toolbar > * {
+  vertical-align: center;
+  margin: 0 2px;
+  height: 36px;
+  padding: 0 12px;
+}
+
+.toolbar > label {
+  padding: 8px 12px;
+}
+
+.toolbar input[type="range"] {
+  width: 80px;
+}
+
+.toolbar > .flexible-space {
+  flex-grow: 1;
+}
+
 .list {
+  position: fixed; 
+  top: 40px;
+  bottom: 0;
+  background: rgba(0,0,0,0.5); 
+  color: white;
   overflow-y: scroll; 
+  overflow-x: hidden;
 }
 
 .list > * {
+  cursor: default;
   padding: 2px 8px;
+}
+
+.list > :hover {
+  border-left: 2px solid rgba(255,255,255,0.5);
+  padding-left: 6px;
 }
 
 .list > .current {
@@ -135,22 +174,18 @@ form, #output, #hint {
 
 .data {
   margin-left: -256px;
-  background-color: rgba(0,0,0,0.25);
+  background-color: rgba(0,0,0,0.5);
   flex-grow: 1;
-  padding: 8px;
-  min-width: 256px;
-}
-
-.star_listing {
-  cursor: default;
 }
 
 .planet {
   display: flex;
+  padding: 0 0 0 8px;
 }
 
 .planet .data {
   margin: 0;
+  padding: 2px 0;
 }
 
 .planet svg {
@@ -158,11 +193,11 @@ form, #output, #hint {
 }
 
 [classification="rocky"] {
-  fill: green;
+  fill: #8f4;
 }
 
 [classification="gas giant"] {
-  fill: #aa2;
+  fill: #fb8;
 }
 
 [classification="brown dwarf"] {
@@ -193,6 +228,20 @@ form, #output, #hint {
   stroke: #ffa;
   stroke-opacity: 0.8;
 }
+input {
+  vertical-align: baseline;
+}
+input[type=range] {
+  vertical-align: bottom;
+}
+label, button {
+  overflow: hidden;
+}
+label .hidden,
+button .hidden {
+  position: absolute;
+  top: -1000px;
+}
 
 @media handheld {
   input, button {
@@ -208,11 +257,6 @@ form, #output, #hint {
   }
   #settings {
     position: fixed;
-    top: 580px;
-  }
-  #output {
-    position: fixed;
-    max-width: 400px;
     top: 580px;
   }
   div, canvas {

@@ -2,189 +2,219 @@
 <html>
   <head>
     <title>Galaxy Generator</title>
-    <meta name="viewport" content="width=768, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="apple-touch-icon" href="images/icon.png"/>
-    <link href="../galaxy/galaxy.css" type="text/css" rel="stylesheet">
+    <link href="galaxy.css" type="text/css" rel="stylesheet">
   </head>
-  <body data-event="mouseup:galaxy-controls.deselect">
-    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: scroll;">
+  <body data-event="mouseup,touchend:galaxy-controls.deselect">
+    <div class="fullscreen">
       <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
-        <circle
-          class="star"
-          data-list="galaxy.stars" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color" 
-          data-event="mouseup:galaxy-controls.pick_star"
-        />
         <line 
           class="y-position"
-          x1="0" y1="-1000" x2="2000" y2="-1000"
+          x1="-500" y1="-1000" x2="2500" y2="-1000"
           stroke-width="1" stroke="white"
         />
         <line 
           class="x-position"
-          x1="-1000" y1="0" x2="-1000" y2="2000"
+          x1="-1000" y1="-500" x2="-1000" y2="2500"
           stroke-width="1" stroke="white"
         />
+        <circle
+          class="star"
+          data-list="galaxy.stars" cx="1" cy="1" r="2"
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;attr(title)=.name" 
+          data-event="mouseup,touchend:galaxy-controls.pick_star"
+        />
       </svg>
-      <!--
-      <div class="tilt" style="position: absolute; top: 50%; left: 50%; width: 2000px; height: 2000px; transform: translate(-50%,-50%) scale3d(0.4,0.4,0.4)">
-        <div class="rotate" style="width: 2000px; height: 2000px;">
-          <div 
-            class="star"
-            data-list="galaxy.stars"
-            data-bind="style(transform)=._transform"
-            data-event="mouseup:galaxy-controls.pick_star"
-          >
-            <div style="background: white; border-radius: 100px;" data-bind="style=._star_style">&nbsp;</span>
-            <span class="name" data-bind="text=.name">name</span>
-          </div>
-        </div>
-      </div>
-      -->
     </div>
-    <form id="settings" name="settings" onSubmit="return false;">
-      <h3>Galaxy Generator</h3>
-      <p>Seed: <input type="number" data-bind="value=settings.seed" /></p>
-      <p>Total: <input type="number" data-bind="value=settings.count" /></p>
-      <p style="text-align: right">
-        <button data-event="click:galaxy-controls.update">Update</button>
-      </p>
-    </form>
-    <div class="container">
-      <div class="list">
-        <div 
-          class="star_listing"
-          data-list="galaxy.stars"
-          data-event="mouseup:galaxy-controls.pick_star"
-        >
-          <span data-bind="text=.name"></span>
-        </div>
-      </div>
-      <div class="system" style="display: none; overflow-y: scroll; overflow-x: hidden">
-        <div style="display: flex;">
-          <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
-            <circle
-              cx="0" cy="0" r="2"
-              stroke-width="4"
-              stroke-opacity="0.5"
-              data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
-              data-event="mouseup:galaxy-controls.pick_star"
-            />
-          </svg>
-          <div class="data">
-            <h2 data-bind="text=system.star.name">Star Name</h2>
-            <p>
-              Spectral Class
-              <span data-bind="text=system.star._detail.spectralType;style(color)=system.star._detail.template.color">X0</span>
-            </p>
-            <p>(<span data-bind="text=system.star._cx">x</span> <span data-bind="text=system.star._cy">y</span> <span data-bind="text=system.star._cz">z</span>)</p>
-          </div>
-        </div>
-        <div class="planet" data-list="system.planets">
-          <div class="data" style="z-index: 10">
-            <h3>
-              <span data-bind="text=.name">
-                Planet Name
-              </span>
-              &mdash;
-              <span style="font-size: 12px; font-style: italic" data-bind="text=.description">
-                description
-              </span>
-            </h3>
-            <p>
-              <span data-bind="text=.g">1</span>g,
-              Orbit <span data-bind="text=.orbitalRadius">1</span> AUs,
-              Insolation <span data-bind="text=.insolation">1</span>
-            </p>
-            <p>
-              <span data-bind="text=.atmosphere">atmosphere</span>,
-              <span data-bind="text=.tempC">xx</span>°C
-              (<span data-bind="text=.temp"></span>),
-              <span data-bind="text=.hydrographics">0</span>% water
-            </p>
-          </div>
-          <svg style="width: 320px; height: 64px;" viewBox="0 0 275000 55000" xmlns="http://www.w3.org/2000/svg">
-            <circle
-              cx="275000" cy="27500" r="2"
-              data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
-              data-event="mouseup:galaxy-controls.pick_star"
-            />
-          </svg>
-        </div>
+    <div class="toolbar" >
+      <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
+        <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
+      </button>
+      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+        <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
+      </button>
+      <div class="flexible-space"> </div>
+      <label>
+        <svg class="icon"><use xlink:href="#icon-dice"></use></svg>
+        <span class="hidden">Random Seed</span>
+        <input title="random seed" type="range" min=0 max=65535 data-bind="value=settings.seed" />
+        <input data-bind="value=settings.seed" style="display: inline-block; width: 4em">
+      </label>
+      <label>
+        <svg class="icon"><use xlink:href="#icon-star-full"></use></svg>
+        <span class="hidden">Number of Stars</span>
+        <input title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
+        <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
+      </label>
+      <button data-event="mouseup,touchend:galaxy-controls.update">
+        <span class="hidden">Generate</span>
+        <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
+      </button>
+    </div>
+    <div class="list stars" style="left: 0" data-event="touchend,mouseup:_BOM_.stopEvent">
+      <div 
+        data-list="galaxy.stars"
+        data-event="mouseup,touchend:galaxy-controls.pick_star"
+      >
+        <span data-bind="text=.name"></span>
       </div>
     </div>
-    <script src="../BOM/require.js"></script>
+    <div class="list system" style="display: none; right: 0;">
+      <div style="display: flex; padding: 0;">
+        <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
+          <circle
+            cx="0" cy="0" r="2"
+            stroke-width="4"
+            stroke-opacity="0.5"
+            data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
+            data-event="mouseup,touchend:galaxy-controls.pick_star"
+          />
+        </svg>
+        <div class="data" style="padding: 2px 8px;">
+          <h2 data-bind="text=system.star.name">Star Name</h2>
+          <p>
+            Spectral Class
+            <span data-bind="text=system.star._detail.spectralType;style(color)=system.star._detail.template.color">X0</span>
+          </p>
+          <p>(<span data-bind="text=system.star._cx">x</span> <span data-bind="text=system.star._cy">y</span> <span data-bind="text=system.star._cz">z</span>)</p>
+        </div>
+      </div>
+      <div class="planet" data-list="system.planets">
+        <div class="data" style="z-index: 10">
+          <h3>
+            <span data-bind="text=.name">
+              Planet Name
+            </span>
+            &mdash;
+            <span style="font-size: 12px; font-style: italic" data-bind="text=.description">
+              description
+            </span>
+          </h3>
+          <p>
+            <span data-bind="text=.g">1</span>g,
+            Orbit <span data-bind="text=.orbitalRadius">1</span> AUs,
+            Insolation <span data-bind="text=.insolation">1</span><br>
+            <span data-bind="text=.atmosphere">atmosphere</span>,
+            <span data-bind="text=.tempC">xx</span>&deg;C
+            (<span data-bind="text=.temp"></span>),
+            <span data-bind="text=.hydrographics">0</span>% water
+          </p>
+        </div>
+        <svg style="width: 320px; height: 64px;" viewBox="0 0 275000 55000" xmlns="http://www.w3.org/2000/svg">
+          <circle
+            cx="275000" cy="27500" r="2"
+            data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
+            data-event="mouseup,touchend:galaxy-controls.pick_star"
+          />
+        </svg>
+      </div>
+    </div>
+    <script src="lib/require.js"></script>
     <script>
-      const BOM = require('../BOM/bom');
-      require('../galaxy/utils');
-      require('../galaxy/iter');
-      const MersenneTwister = require('../galaxy/mersenne_twister');
-      const badwords = require('../galaxy/badwords');
-      const PRNG = require('../galaxy/prng');
-      const {blackbody, starTypeData, planetTypeData} = require('../galaxy/astrophysics');
-      const Star = require('../galaxy/star');
-      const Planet = require('../galaxy/planet');
-      const random_name = require('../galaxy/random_name');
-      const galaxy = require('../galaxy/galaxy');
+      const BOM = require('lib/bom');
+      require('utils');
+      require('iter');
+      const MersenneTwister = require('mersenne_twister');
+      const badwords = require('badwords');
+      const PRNG = require('prng');
+      const {blackbody, starTypeData, planetTypeData} = require('astrophysics');
+      const Star = require('star');
+      const Planet = require('planet');
+      const random_name = require('random_name');
+      const galaxy = require('galaxy');
       
-      const settings = {count: 1000, seed: 1234};
+      var settings = {count: 1000, seed: 1234};
       if (window.location.hash) {
         try {
           var hash = JSON.parse(window.location.hash.substr(1));
+          for (var key in hash) {
+            BOM.setByPath('settings', key, hash[key]);
+          }
           Object.assign(settings, hash);
         } catch(e){}
       }
+      BOM.register('settings', settings);
       
       function update () {
-        window.location.hash = JSON.stringify(settings);
+        window.location.hash = JSON.stringify(BOM.getByPath('settings'));
       }
       
       function pick_star (evt) {
         const star = BOM.getInstance(evt.target);
         if( !evt.target.matches('.current') ) {
-          settings.star = BOM.getByPath('galaxy', 'stars').indexOf(star);
-        }  else {
-          settings.zoom = 500;
+          BOM.setByPath('settings', 'star', BOM.getByPath('galaxy', 'stars').indexOf(star));
+          const zoom = BOM.getByPath('settings', 'zoom');
+          if (zoom === undefined || zoom > 1000) {
+            BOM.setByPath('settings', 'zoom', 500);
+          }
         }
         update();
       }
       
       function deselect() {
-        delete(settings.star);
-        delete(settings.zoom);
+        BOM.setByPath('settings', 'star', undefined);
+        BOM.setByPath('settings', 'zoom', undefined);
+        BOM.setByPath('settings', 'x', undefined);
+        BOM.setByPath('settings', 'y', undefined);
+        update();
+        return true;
+      }
+
+      function zoomIn () {
+        const {zoom} = BOM.getByPath('settings');
+        if (zoom) {
+          BOM.setByPath('settings', 'zoom', zoom * 0.5);
+        } else {
+          BOM.setByPath('settings', 'zoom', 1000);
+        }
+        update();
+      }
+
+      function zoomOut () {
+        const {zoom} = BOM.getByPath('settings');
+        if (zoom < 1000) {
+          BOM.setByPath('settings', 'zoom', zoom * 2);
+        } else {
+          BOM.setByPath('settings', 'zoom', undefined);
+          BOM.setByPath('settings', 'x', undefined);
+          BOM.setByPath('settings', 'y', undefined);
+        }
         update();
       }
       
-      BOM.register('settings', settings);
-      BOM.register('galaxy-controls', {update, pick_star, deselect});
+      BOM.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
       
       const last_render_params = {};
       const xPos = BOM.findOne('.x-position');
       const yPos = BOM.findOne('.y-position');
       const systemInfo = BOM.findOne('.system');
       const galaxyFrame = BOM.findOne('.galaxy-frame');
+      const zoomOutButton = BOM.findOne('.zoomOut');
+      const zoomInButton = BOM.findOne('.zoomIn');
       function render() {
+        const {seed, count, star, zoom} = BOM.getByPath('settings');
         if(
-          last_render_params.seed !== settings.seed || 
-          last_render_params.count !== settings.count
+          last_render_params.seed !== seed || 
+          last_render_params.count !== count
         ) {
-          BOM.register('galaxy', galaxy(parseInt(settings.seed, 10), parseInt(settings.count, 10)));
+          BOM.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
         }
         BOM.find('.current')
            .forEach(elt => elt.classList.remove('current'));
-        if(settings.star === undefined) {
+        if(star === undefined) {
           [systemInfo, xPos, yPos].forEach(elt => BOM.hide(elt));
         } else if (
-          typeof settings.star === 'number' && 
-          settings.star !== last_render_params.star
+          typeof star === 'number' && 
+          star !== last_render_params.star
         ) {
-          const star = BOM.getByPath('galaxy', 'stars')[settings.star];
-          const planets = star.planetsDetail();
-          console.log(star, planets);
-          BOM.register('system', {star, planets});
-          BOM.find('[data-list-instance="galaxy.stars[' + settings.star + ']"]')
+          const _star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          const planets = _star.planetsDetail();
+          console.log(_star, planets);
+          BOM.register('system', {star: _star, planets});
+          BOM.find('[data-list-instance="galaxy.stars[' + star + ']"]')
              .forEach(elt => {
                 elt.classList.add('current');
                 const y = elt.offsetTop - elt.parentElement.scrollTop;
@@ -192,29 +222,30 @@
                   elt.scrollIntoView({behavior: 'smooth'});
                 }
               });
-          xPos.setAttribute('x1', star._x);
-          xPos.setAttribute('x2', star._x);
-          yPos.setAttribute('y1', star._y);
-          yPos.setAttribute('y2', star._y);
+          xPos.setAttribute('x1', _star._x);
+          xPos.setAttribute('x2', _star._x);
+          yPos.setAttribute('y1', _star._y);
+          yPos.setAttribute('y2', _star._y);
           [systemInfo, xPos, yPos].forEach(elt => BOM.show(elt));
         }        
-        if (settings.zoom) {
-          const star = BOM.getByPath('galaxy', 'stars')[settings.star];
-          settings.x = star._x - settings.zoom * 0.75;
-          settings.y = star._y - settings.zoom * 0.5;
+        if (zoom && star !== undefined) {
+          const _star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          settings.x = _star._x - settings.zoom * 0.5;
+          settings.y = _star._y - settings.zoom * 0.5;
           changeViewBox();
         } else {
           changeViewBox(0, 0, 2000);
         }
-        Object.assign(last_render_params, settings);
+        Object.assign(last_render_params, {star, zoom, seed, count});
       }
       
-      function changeViewBox() {
-        var x = 0, y = 0, w = 2000;
-        if(settings.zoom) {
-          x = settings.x;
-          y = settings.y;
-          w = settings.zoom;
+      function changeViewBox(x, y, w) {
+        var {zoom, x, y} = BOM.getByPath('settings');
+        var w = zoom;
+        if(w === undefined || x === undefined || y === undefined) {
+          x = 0;
+          y = 0;
+          w = 2000;
         }
         /*
         galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
@@ -248,4 +279,28 @@
       window.addEventListener('hashchange', render);  
     </script>
   </body>
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<symbol id="icon-dice" viewBox="0 0 32 32">
+<title>dice</title>
+<path fill="white" class="path1" d="M27 6h-16c-2.75 0-5 2.25-5 5v16c0 2.75 2.25 5 5 5h16c2.75 0 5-2.25 5-5v-16c0-2.75-2.25-5-5-5zM13 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM13 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM19 22c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25.899 4c-0.467-2.275-2.491-4-4.899-4h-16c-2.75 0-5 2.25-5 5v16c0 2.408 1.725 4.432 4 4.899v-19.899c0-1.1 0.9-2 2-2h19.899z"></path>
+</symbol>
+<symbol id="icon-spinner11" viewBox="0 0 32 32">
+<title>spinner11</title>
+<path fill="white" class="path1" d="M32 12h-12l4.485-4.485c-2.267-2.266-5.28-3.515-8.485-3.515s-6.219 1.248-8.485 3.515c-2.266 2.267-3.515 5.28-3.515 8.485s1.248 6.219 3.515 8.485c2.267 2.266 5.28 3.515 8.485 3.515s6.219-1.248 8.485-3.515c0.189-0.189 0.371-0.384 0.546-0.583l3.010 2.634c-2.933 3.349-7.239 5.464-12.041 5.464-8.837 0-16-7.163-16-16s7.163-16 16-16c4.418 0 8.418 1.791 11.313 4.687l4.687-4.687v12z"></path>
+</symbol>
+<symbol id="icon-zoom-in" viewBox="0 0 32 32">
+<title>zoom-in</title>
+<path fill="white" class="path1" d="M31.008 27.231l-7.58-6.447c-0.784-0.705-1.622-1.029-2.299-0.998 1.789-2.096 2.87-4.815 2.87-7.787 0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12c2.972 0 5.691-1.081 7.787-2.87-0.031 0.677 0.293 1.515 0.998 2.299l6.447 7.58c1.104 1.226 2.907 1.33 4.007 0.23s0.997-2.903-0.23-4.007zM12 20c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8zM14 6h-4v4h-4v4h4v4h4v-4h4v-4h-4z"></path>
+</symbol>
+<symbol id="icon-zoom-out" viewBox="0 0 32 32">
+<title>zoom-out</title>
+<path fill="white" class="path1" d="M31.008 27.231l-7.58-6.447c-0.784-0.705-1.622-1.029-2.299-0.998 1.789-2.096 2.87-4.815 2.87-7.787 0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12c2.972 0 5.691-1.081 7.787-2.87-0.031 0.677 0.293 1.515 0.998 2.299l6.447 7.58c1.104 1.226 2.907 1.33 4.007 0.23s0.997-2.903-0.23-4.007zM12 20c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8zM6 10h12v4h-12z"></path>
+</symbol>
+<symbol id="icon-star-full" viewBox="0 0 32 32">
+<title>star-full</title>
+<path fill="white" class="path1" d="M32 12.408l-11.056-1.607-4.944-10.018-4.944 10.018-11.056 1.607 8 7.798-1.889 11.011 9.889-5.199 9.889 5.199-1.889-11.011 8-7.798z"></path>
+</symbol>
+</defs>
+</svg>
 </html>

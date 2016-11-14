@@ -1,4 +1,4 @@
-const Planet = require('../galaxy/planet');
+const Planet = require('planet');
 
 function Star( name, seed, position ){
 	this.name = name;

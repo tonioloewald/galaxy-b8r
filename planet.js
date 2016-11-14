@@ -1,4 +1,4 @@
-const {gravity, blackbody} = require('../galaxy/astrophysics');
+const {gravity, blackbody} = require('astrophysics');
 
 function Planet( name, seed, orbitalRadius, insolation ){
 	this.name = name;
