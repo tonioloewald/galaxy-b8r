@@ -194,9 +194,10 @@
       const galaxyFrame = b8r.findOne('.galaxy-frame');
       const zoomOutButton = b8r.findOne('.zoomOut');
       const zoomInButton = b8r.findOne('.zoomIn');
-      function render() {
-        b8r.register('settings', JSON.parse(window.location.hash.substr(1)));
-        const {seed, count, star, zoom} = b8r.getByPath('settings');
+      function render(evt) {
+        const {seed, count, star, zoom} = window.location.hash ? 
+                                          JSON.parse(window.location.hash.substr(1)) : 
+                                          b8r.getByPath('settings');
         if(
           last_render_params.seed !== seed || 
           last_render_params.count !== count
@@ -211,7 +212,7 @@
           typeof star === 'number' && 
           star !== last_render_params.star
         ) {
-          const _star = b8r.getByPath('galaxy', 'stars')[settings.star];
+          const _star = b8r.getByPath('galaxy', 'stars')[star];
           const planets = _star.planetsDetail();
           console.log(_star, planets);
           b8r.register('system', {star: _star, planets});
@@ -228,12 +229,10 @@
           yPos.setAttribute('y1', _star._y);
           yPos.setAttribute('y2', _star._y);
           [systemInfo, xPos, yPos].forEach(elt => b8r.show(elt));
-        }        
+        }
         if (zoom && star !== undefined) {
-          const _star = b8r.getByPath('galaxy', 'stars')[settings.star];
-          settings.x = _star._x - settings.zoom * 0.5;
-          settings.y = _star._y - settings.zoom * 0.5;
-          changeViewBox();
+          const _star = b8r.getByPath('galaxy', 'stars')[star];
+          changeViewBox(_star._x - zoom * 0.5, _star._y - zoom * 0.5, zoom);
         } else {
           changeViewBox(0, 0, 2000);
         }
@@ -241,8 +240,6 @@
       }
       
       function changeViewBox(x, y, w) {
-        var {zoom, x, y} = b8r.getByPath('settings');
-        var w = zoom;
         if(w === undefined || x === undefined || y === undefined) {
           x = 0;
           y = 0;
@@ -277,8 +274,7 @@
       
       render();  
       
-      window.addEventListener('hashchange', render);  
-      window.addEventListener('popstate', render);  
+      window.addEventListener('hashchange', render);    
     </script>
   </body>
 <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
