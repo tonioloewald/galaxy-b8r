@@ -33,7 +33,7 @@
       <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+      <button data-bind="enabled_unless(_undefined_)=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
@@ -54,7 +54,7 @@
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
     </div>
-    <div class="list stars" style="left: 0" data-event="touchend,mouseup:_BOM_.stopEvent">
+    <div class="list stars" style="left: 0" data-event="touchend,mouseup:_b8r_.stopEvent">
       <div 
         data-list="galaxy.stars"
         data-event="mouseup,touchend:galaxy-controls.pick_star"
@@ -63,7 +63,7 @@
       </div>
     </div>
     <div class="list system" style="display: none; right: 0;">
-      <div style="display: flex; padding: 0;">
+      <div style="display: flex; padding: 0; border: 0;">
         <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
           <circle
             cx="0" cy="0" r="2"
@@ -114,7 +114,7 @@
     </div>
     <script src="lib/require.js"></script>
     <script>
-      const BOM = require('lib/bom');
+      const b8r = require('lib/b8r');
       require('utils');
       require('iter');
       const MersenneTwister = require('mersenne_twister');
@@ -131,90 +131,91 @@
         try {
           var hash = JSON.parse(window.location.hash.substr(1));
           for (var key in hash) {
-            BOM.setByPath('settings', key, hash[key]);
+            b8r.setByPath('settings', key, hash[key]);
           }
           Object.assign(settings, hash);
         } catch(e){}
       }
-      BOM.register('settings', settings);
+      b8r.register('settings', settings);
       
       function update () {
-        window.location.hash = JSON.stringify(BOM.getByPath('settings'));
+        window.location.hash = JSON.stringify(b8r.getByPath('settings'));
       }
       
       function pick_star (evt) {
-        const star = BOM.getInstance(evt.target);
+        const star = b8r.getInstance(evt.target);
         if( !evt.target.matches('.current') ) {
-          BOM.setByPath('settings', 'star', BOM.getByPath('galaxy', 'stars').indexOf(star));
-          const zoom = BOM.getByPath('settings', 'zoom');
+          b8r.setByPath('settings', 'star', b8r.getByPath('galaxy', 'stars').indexOf(star));
+          const zoom = b8r.getByPath('settings', 'zoom');
           if (zoom === undefined || zoom > 1000) {
-            BOM.setByPath('settings', 'zoom', 500);
+            b8r.setByPath('settings', 'zoom', 500);
           }
         }
         update();
       }
       
       function deselect() {
-        BOM.setByPath('settings', 'star', undefined);
-        BOM.setByPath('settings', 'zoom', undefined);
-        BOM.setByPath('settings', 'x', undefined);
-        BOM.setByPath('settings', 'y', undefined);
+        b8r.setByPath('settings', 'star', undefined);
+        b8r.setByPath('settings', 'zoom', undefined);
+        b8r.setByPath('settings', 'x', undefined);
+        b8r.setByPath('settings', 'y', undefined);
         update();
         return true;
       }
 
       function zoomIn () {
-        const {zoom} = BOM.getByPath('settings');
+        const {zoom} = b8r.getByPath('settings');
         if (zoom) {
-          BOM.setByPath('settings', 'zoom', zoom * 0.5);
+          b8r.setByPath('settings', 'zoom', zoom * 0.5);
         } else {
-          BOM.setByPath('settings', 'zoom', 1000);
+          b8r.setByPath('settings', 'zoom', 1000);
         }
         update();
       }
 
       function zoomOut () {
-        const {zoom} = BOM.getByPath('settings');
+        const {zoom} = b8r.getByPath('settings');
         if (zoom < 1000) {
-          BOM.setByPath('settings', 'zoom', zoom * 2);
+          b8r.setByPath('settings', 'zoom', zoom * 2);
         } else {
-          BOM.setByPath('settings', 'zoom', undefined);
-          BOM.setByPath('settings', 'x', undefined);
-          BOM.setByPath('settings', 'y', undefined);
+          b8r.setByPath('settings', 'zoom', undefined);
+          b8r.setByPath('settings', 'x', undefined);
+          b8r.setByPath('settings', 'y', undefined);
         }
         update();
       }
       
-      BOM.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
+      b8r.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
       
       const last_render_params = {};
-      const xPos = BOM.findOne('.x-position');
-      const yPos = BOM.findOne('.y-position');
-      const systemInfo = BOM.findOne('.system');
-      const galaxyFrame = BOM.findOne('.galaxy-frame');
-      const zoomOutButton = BOM.findOne('.zoomOut');
-      const zoomInButton = BOM.findOne('.zoomIn');
+      const xPos = b8r.findOne('.x-position');
+      const yPos = b8r.findOne('.y-position');
+      const systemInfo = b8r.findOne('.system');
+      const galaxyFrame = b8r.findOne('.galaxy-frame');
+      const zoomOutButton = b8r.findOne('.zoomOut');
+      const zoomInButton = b8r.findOne('.zoomIn');
       function render() {
-        const {seed, count, star, zoom} = BOM.getByPath('settings');
+        b8r.register('settings', JSON.parse(window.location.hash.substr(1)));
+        const {seed, count, star, zoom} = b8r.getByPath('settings');
         if(
           last_render_params.seed !== seed || 
           last_render_params.count !== count
         ) {
-          BOM.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
+          b8r.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
         }
-        BOM.find('.current')
+        b8r.find('.current')
            .forEach(elt => elt.classList.remove('current'));
         if(star === undefined) {
-          [systemInfo, xPos, yPos].forEach(elt => BOM.hide(elt));
+          [systemInfo, xPos, yPos].forEach(elt => b8r.hide(elt));
         } else if (
           typeof star === 'number' && 
           star !== last_render_params.star
         ) {
-          const _star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          const _star = b8r.getByPath('galaxy', 'stars')[settings.star];
           const planets = _star.planetsDetail();
           console.log(_star, planets);
-          BOM.register('system', {star: _star, planets});
-          BOM.find('[data-list-instance="galaxy.stars[' + star + ']"]')
+          b8r.register('system', {star: _star, planets});
+          b8r.find('[data-list-instance="galaxy.stars[' + star + ']"]')
              .forEach(elt => {
                 elt.classList.add('current');
                 const y = elt.offsetTop - elt.parentElement.scrollTop;
@@ -226,10 +227,10 @@
           xPos.setAttribute('x2', _star._x);
           yPos.setAttribute('y1', _star._y);
           yPos.setAttribute('y2', _star._y);
-          [systemInfo, xPos, yPos].forEach(elt => BOM.show(elt));
+          [systemInfo, xPos, yPos].forEach(elt => b8r.show(elt));
         }        
         if (zoom && star !== undefined) {
-          const _star = BOM.getByPath('galaxy', 'stars')[settings.star];
+          const _star = b8r.getByPath('galaxy', 'stars')[settings.star];
           settings.x = _star._x - settings.zoom * 0.5;
           settings.y = _star._y - settings.zoom * 0.5;
           changeViewBox();
@@ -240,7 +241,7 @@
       }
       
       function changeViewBox(x, y, w) {
-        var {zoom, x, y} = BOM.getByPath('settings');
+        var {zoom, x, y} = b8r.getByPath('settings');
         var w = zoom;
         if(w === undefined || x === undefined || y === undefined) {
           x = 0;
@@ -277,6 +278,7 @@
       render();  
       
       window.addEventListener('hashchange', render);  
+      window.addEventListener('popstate', render);  
     </script>
   </body>
 <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
