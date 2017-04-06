@@ -1,3 +1,8 @@
+/* global module, require */
+'use strict';
+
+const MersenneTwister = require('mersenne_twister.js');
+
 // Pseudo-random number generator -- convenience wrapper for Mersenne Twister
 function PRNG( seed ){
 	this.mt = new MersenneTwister(seed);
@@ -33,13 +38,13 @@ PRNG.prototype.gaussrandom = function( dev ){
     var context = this.gaussrandom.context;
     if( context === undefined ){
         context = this.gaussrandom.context = { phase: 0 };
-    };
+    }
     if( context.phase === 0 ){
         do {
             context.V1 = this.realRange(-1,1);
             context.V2 = this.realRange(-1,1);
             context.S = context.V1 * context.V1 + context.V2 * context.V2;
-        } while( context.S >= 1 || context.S == 0 );
+        } while( context.S >= 1 || context.S === 0 );
         
         X = context.V1 * Math.sqrt( -2 * Math.log(context.S) / context.S );
     } else {

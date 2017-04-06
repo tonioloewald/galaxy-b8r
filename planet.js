@@ -1,4 +1,8 @@
-const {gravity, blackbody} = require('astrophysics');
+/* global module, require */
+'use strict';
+
+const {gravity, blackbody, planetTypeData} = require('astrophysics.js');
+const PRNG = require('prng.js');
 
 function Planet( name, seed, orbitalRadius, insolation ){
 	this.name = name;
@@ -35,7 +39,7 @@ Planet.prototype.detail = function(){
 };
 
 Planet.prototype.description = function(){
-	output = '';
+	var output = '';
 	output += '<h3>' + this.name.capitalize() + "</h3>\n";
 	output += this.detail().toHTML();
 	return output;

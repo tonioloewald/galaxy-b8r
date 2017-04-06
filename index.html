@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="apple-touch-icon" href="images/icon.png"/>
     <link href="galaxy.css" type="text/css" rel="stylesheet">
-  </head>
+  </head>at
   <body data-event="mouseup,touchend:galaxy-controls.deselect">
     <div class="fullscreen">
       <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
@@ -113,169 +113,162 @@
         </svg>
       </div>
     </div>
-    <script src="lib/require.js"></script>
+    <script src="https://rawgit.com/tonioloewald/bindinator.js/master/lib/require.js"></script>
     <script>
-      const b8r = require('lib/b8r');
-      require('utils');
-      require('iter');
-      const MersenneTwister = require('mersenne_twister');
-      const badwords = require('badwords');
-      const PRNG = require('prng');
-      const {blackbody, starTypeData, planetTypeData} = require('astrophysics');
-      const Star = require('star');
-      const Planet = require('planet');
-      const random_name = require('random_name');
-      const galaxy = require('galaxy');
-      
-      var settings = {count: 1000, seed: 1234};
-      if (window.location.hash) {
-        try {
-          var hash = JSON.parse(window.location.hash.substr(1));
-          for (var key in hash) {
-            b8r.setByPath('settings', key, hash[key]);
-          }
-          Object.assign(settings, hash);
-        } catch(e){}
-      }
-      b8r.register('settings', settings);
-      
-      function update () {
-        window.location.hash = JSON.stringify(b8r.getByPath('settings'));
-      }
-      
-      function pick_star (evt) {
-        const star = b8r.getInstance(evt.target);
-        if( !evt.target.matches('.current') ) {
-          b8r.setByPath('settings', 'star', b8r.getByPath('galaxy', 'stars').indexOf(star));
-          const zoom = b8r.getByPath('settings', 'zoom');
-          if (zoom === undefined || zoom > 1000) {
-            b8r.setByPath('settings', 'zoom', 500);
-          }
+      /* global require, console */
+      'use strict';
+      require.autoPreload().then(() => {
+        const b8r = require('https://rawgit.com/tonioloewald/bindinator.js/master/source/b8r.js');
+        require('utils.js');
+        require('iter.js');
+        const galaxy = require('galaxy.js');
+        
+        b8r.register('settings', {count: 1000, seed: 1234});
+        if (window.location.hash) {
+          try {
+            var hash = JSON.parse(window.location.hash.substr(1));
+            for (var key in hash) {
+              b8r.setByPath('settings', key, hash[key]);
+            }
+          } catch(e){}
         }
-        update();
-      }
-      
-      function deselect() {
-        b8r.setByPath('settings', 'star', undefined);
-        b8r.setByPath('settings', 'zoom', undefined);
-        b8r.setByPath('settings', 'x', undefined);
-        b8r.setByPath('settings', 'y', undefined);
-        update();
-        return true;
-      }
-
-      function zoomIn () {
-        const {zoom} = b8r.getByPath('settings');
-        if (zoom) {
-          b8r.setByPath('settings', 'zoom', zoom * 0.5);
-        } else {
-          b8r.setByPath('settings', 'zoom', 1000);
+        
+        function update () {
+          window.location.hash = JSON.stringify(b8r.getByPath('settings'));
         }
-        update();
-      }
-
-      function zoomOut () {
-        const {zoom} = b8r.getByPath('settings');
-        if (zoom < 1000) {
-          b8r.setByPath('settings', 'zoom', zoom * 2);
-        } else {
+        
+        function pick_star (evt) {
+          const star = b8r.getListInstance(evt.target);
+          if( !evt.target.matches('.current') ) {
+            b8r.setByPath('settings', 'star', b8r.getByPath('galaxy', 'stars').indexOf(star));
+            const zoom = b8r.getByPath('settings', 'zoom');
+            if (!zoom || zoom > 1000) {
+              b8r.setByPath('settings', 'zoom', 500);
+            }
+          }
+          update();
+        }
+        
+        function deselect() {
+          b8r.setByPath('settings', 'star', undefined);
           b8r.setByPath('settings', 'zoom', undefined);
           b8r.setByPath('settings', 'x', undefined);
           b8r.setByPath('settings', 'y', undefined);
+          update();
+          return true;
         }
-        update();
-      }
-      
-      b8r.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
-      
-      const last_render_params = {};
-      const xPos = b8r.findOne('.x-position');
-      const yPos = b8r.findOne('.y-position');
-      const systemInfo = b8r.findOne('.system');
-      const galaxyFrame = b8r.findOne('.galaxy-frame');
-      const zoomOutButton = b8r.findOne('.zoomOut');
-      const zoomInButton = b8r.findOne('.zoomIn');
-      function render(evt) {
-        const {seed, count, star, zoom} = window.location.hash ? 
-                                          JSON.parse(window.location.hash.substr(1)) : 
-                                          b8r.getByPath('settings');
-        if(
-          last_render_params.seed !== seed || 
-          last_render_params.count !== count
-        ) {
-          b8r.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
-        }
-        b8r.find('.current')
-           .forEach(elt => elt.classList.remove('current'));
-        if(star === undefined) {
-          [systemInfo, xPos, yPos].forEach(elt => b8r.hide(elt));
-        } else if (
-          typeof star === 'number' && 
-          star !== last_render_params.star
-        ) {
-          const _star = b8r.getByPath('galaxy', 'stars')[star];
-          const planets = _star.planetsDetail();
-          console.log(_star, planets);
-          b8r.register('system', {star: _star, planets});
-          b8r.find('[data-list-instance="galaxy.stars[' + star + ']"]')
-             .forEach(elt => {
-                elt.classList.add('current');
-                const y = elt.offsetTop - elt.parentElement.scrollTop;
-                if(y < 0 || y + elt.offsetHeight > elt.parentElement.offsetHeight) {
-                  elt.scrollIntoView({behavior: 'smooth'});
-                }
-              });
-          xPos.setAttribute('x1', _star._x);
-          xPos.setAttribute('x2', _star._x);
-          yPos.setAttribute('y1', _star._y);
-          yPos.setAttribute('y2', _star._y);
-          [systemInfo, xPos, yPos].forEach(elt => b8r.show(elt));
-        }
-        if (zoom && star !== undefined) {
-          const _star = b8r.getByPath('galaxy', 'stars')[star];
-          changeViewBox(_star._x - zoom * 0.5, _star._y - zoom * 0.5, zoom);
-        } else {
-          changeViewBox(0, 0, 2000);
-        }
-        Object.assign(last_render_params, {star, zoom, seed, count});
-      }
-      
-      function changeViewBox(x, y, w) {
-        if(w === undefined || x === undefined || y === undefined) {
-          x = 0;
-          y = 0;
-          w = 2000;
-        }
-        /*
-        galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
-        return;
-        */
-        const [x0, y0, w0] = galaxyFrame.getAttribute('viewBox').split(' ');
-        
-        const duration = 500;
-        const animationEnds = Date.now() + duration;
-        
-        function iterate() {
-          if (Date.now() > animationEnds) {
-            console.log('done changing viewbox');
-            galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
+
+        function zoomIn () {
+          const {zoom} = b8r.getByPath('settings');
+          if (zoom) {
+            b8r.setByPath('settings', 'zoom', zoom * 0.5);
           } else {
-            var t = 1 - (animationEnds - Date.now()) / duration;
-            t = (Math.sin((t - 0.5) * Math.PI) + 1) * 0.5;
-            const xt = Math.lerp(x0, x, t);
-            const yt = Math.lerp(y0, y, t);
-            const wt = Math.lerp(w0, w, t);
-            galaxyFrame.setAttribute('viewBox', `${xt} ${yt} ${wt} ${wt}`);
-            requestAnimationFrame(iterate);
+            b8r.setByPath('settings', 'zoom', 1000);
           }
+          update();
+        }
+
+        function zoomOut () {
+          const {zoom} = b8r.getByPath('settings');
+          if (zoom < 1000) {
+            b8r.setByPath('settings', 'zoom', zoom * 2);
+          } else {
+            b8r.setByPath('settings', 'zoom', undefined);
+            b8r.setByPath('settings', 'x', undefined);
+            b8r.setByPath('settings', 'y', undefined);
+          }
+          update();
         }
         
-        requestAnimationFrame(iterate);
-      }
-      
-      render();  
-      
-      window.addEventListener('hashchange', render);    
+        b8r.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
+        
+        const last_render_params = {};
+        const xPos = b8r.findOne('.x-position');
+        const yPos = b8r.findOne('.y-position');
+        const systemInfo = b8r.findOne('.system');
+        const galaxyFrame = b8r.findOne('.galaxy-frame');
+        function render() {
+          const {seed, count, star, zoom} = window.location.hash ? 
+                                            JSON.parse(window.location.hash.substr(1)) : 
+                                            b8r.getByPath('settings');
+          if(
+            last_render_params.seed !== seed || 
+            last_render_params.count !== count
+          ) {
+            b8r.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
+          }
+          b8r.find('.current')
+             .forEach(elt => elt.classList.remove('current'));
+          if(star === undefined) {
+            [systemInfo, xPos, yPos].forEach(elt => b8r.hide(elt));
+          } else if (
+            typeof star === 'number' && 
+            star !== last_render_params.star
+          ) {
+            const _star = b8r.getByPath('galaxy', 'stars')[star];
+            const planets = _star.planetsDetail();
+            console.log(_star, planets);
+            b8r.register('system', {star: _star, planets});
+            b8r.find('[data-list-instance="galaxy.stars[' + star + ']"]')
+               .forEach(elt => {
+                  elt.classList.add('current');
+                  const y = elt.offsetTop - elt.parentElement.scrollTop;
+                  if(y < 0 || y + elt.offsetHeight > elt.parentElement.offsetHeight) {
+                    elt.scrollIntoView({behavior: 'smooth'});
+                  }
+                });
+            xPos.setAttribute('x1', _star._x);
+            xPos.setAttribute('x2', _star._x);
+            yPos.setAttribute('y1', _star._y);
+            yPos.setAttribute('y2', _star._y);
+            [systemInfo, xPos, yPos].forEach(elt => b8r.show(elt));
+          }
+          if (zoom && star !== undefined) {
+            const _star = b8r.getByPath('galaxy', 'stars')[star];
+            changeViewBox(_star._x - zoom * 0.5, _star._y - zoom * 0.5, zoom);
+          } else {
+            changeViewBox(0, 0, 2000);
+          }
+          Object.assign(last_render_params, {star, zoom, seed, count});
+        }
+        
+        function changeViewBox(x, y, w) {
+          if(w === undefined || x === undefined || y === undefined) {
+            x = 0;
+            y = 0;
+            w = 2000;
+          }
+          /*
+          galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
+          return;
+          */
+          const [x0, y0, w0] = galaxyFrame.getAttribute('viewBox').split(' ');
+          
+          const duration = 500;
+          const animationEnds = Date.now() + duration;
+          
+          function iterate() {
+            if (Date.now() > animationEnds) {
+              console.log('done changing viewbox');
+              galaxyFrame.setAttribute('viewBox', `${x} ${y} ${w} ${w}`);
+            } else {
+              var t = 1 - (animationEnds - Date.now()) / duration;
+              t = (Math.sin((t - 0.5) * Math.PI) + 1) * 0.5;
+              const xt = Math.lerp(x0, x, t);
+              const yt = Math.lerp(y0, y, t);
+              const wt = Math.lerp(w0, w, t);
+              galaxyFrame.setAttribute('viewBox', `${xt} ${yt} ${wt} ${wt}`);
+              requestAnimationFrame(iterate);
+            }
+          }
+          
+          requestAnimationFrame(iterate);
+        }
+        
+        render();  
+        
+        window.addEventListener('hashchange', render);
+      });  
     </script>
   </body>
 <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

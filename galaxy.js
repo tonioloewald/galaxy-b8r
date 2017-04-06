@@ -1,4 +1,11 @@
+/* global module, require, console */
+'use strict';
+
 function galaxy(seed, number_of_stars){
+  const PRNG = require('prng.js');
+  const badwords = require('badwords.js');
+  const random_name = require('random_name.js');
+  const Star = require('star.js');
   const spiral_arms = 2,
         spiral_angle_degrees = 360,
         min_radius = 0.05, 
@@ -14,7 +21,7 @@ function galaxy(seed, number_of_stars){
   var i,
       position;
   
-  pseudoRandom = new PRNG(seed);
+  var pseudoRandom = new PRNG(seed);
   
   for( i = 0; i < number_of_stars; i++ ){
     var number_of_syllables = Math.floor( pseudoRandom.value() * 2 + 2 ),
@@ -25,7 +32,7 @@ function galaxy(seed, number_of_stars){
       if( names.indexOf( new_name ) >= 0 ){
         rejects.duplicates++;
       } else if ( badwords.indexOf( new_name ) >= 0 || badwords.indexContains( new_name ) >= 0) {
-        rejects.badwords++
+        rejects.badwords++;
       } else {
         break;
       }
@@ -68,7 +75,7 @@ function galaxy(seed, number_of_stars){
       height: s + 'px',
       backgroundColor: color,
       border: `${s * 0.25}px solid rgba(0,0,0,0.7)`,
-    }
+    };
   });
   
   console.log( 'names rejected', rejects );

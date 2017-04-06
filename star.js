@@ -1,4 +1,9 @@
-const Planet = require('planet');
+/* global module, require, romanNumeral */
+'use strict';
+
+const {starTypeData} = require('astrophysics.js');
+const Planet = require('planet.js');
+const PRNG = require('prng.js');
 
 function Star( name, seed, position ){
 	this.name = name;
@@ -27,7 +32,7 @@ Star.prototype.detail = function(){
 	detail.template = stellarTemplate;
 	
 	return detail;
-}
+};
 
 Star.prototype.planets = function(){
 	var detail = this.detail(),
@@ -44,18 +49,16 @@ Star.prototype.planets = function(){
 	}
 	
 	return planets;
-}
+};
 
 Star.prototype.planetsDetail = function() {
   return this.planets().map(planet => planet.detail());
-}
+};
 
 Star.prototype.description = function(){
-	output = '';
+	var output = '';
 	output += '<h3>' + this.name.capitalize() + "</h3>\n";
 	output += this.detail().toHTML(true);
-	Iter.each( this.planets(), function( planet ){
-		output += '<div class="subrecord">' + planet.description() + '</div>';
-	});
+	this.planets().forEach( planet => output += '<div class="subrecord">' + planet.description() + '</div>' );
 	return output;
-}
+};

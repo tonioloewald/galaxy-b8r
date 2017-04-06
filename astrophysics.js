@@ -104,26 +104,30 @@ function HI( insolation, radius, density, hydrographics, atmosphere ){
   var temp;
   if(tempC < -150) {
     temp = "frigid";
-  } else if (tempC < -70) {
+  } else if (tempC < -80) {
+    templ = "extremely cold";
+  } else if (tempC < -40) {
     temp = "very cold";
   } else if (tempC < -10) {
     temp = "cold";
   } else if (tempC < 30) {
     temp = "temperate";
-  } else if (tempC < 60) {
+  } else if (tempC < 50) {
     temp = "hot";
-  } else if (tempC < 120) {
+  } else if (tempC < 90) {
     temp = "very hot";
+  } else if (tempC < 150) {
+    temp = "extremely hot";
   } else {
     temp = "inferno";
   }
   var data;
   if( atmosphere === "Breathable" && hydrographics > 0 && g < 1.25 && ['cold','hot','temperate'].indexOf(temp) > -1 ){
     data = {HI: 1, description: 'earthlike'};
-  } else if ( ['Breathable', 'Filterable'].indexOf(atmosphere) > -1 && g < 2 && ['inferno', 'frigid'].indexOf(temp) === -1 ){
+  } else if ( ['Breathable', 'Filterable'].indexOf(atmosphere) > -1 && g < 2 && ['inferno', 'extremely hot', 'extremely cold', 'frigid'].indexOf(temp) === -1 ){
     data = {HI: 2, description: 'survivable'};
-  } else if ( atmosphere === "Corrosive" || g > 3 || ['inferno', 'frigid'].indexOf(temp) > -1 ){
-    data = tempC > 800 ? {HI: 5, description: 'inimical'} : {HI: 1, description: 'robot accessible'};
+  } else if ( atmosphere === "Crushing" || g > 3 || ['inferno', 'frigid'].indexOf(temp) > -1 ){
+    data = tempC > 800 ? {HI: 5, description: 'inimical'} : {HI: 4, description: 'robot accessible'};
   } else {
     data = {HI: 3, description: 'EVA possible'};
   }
