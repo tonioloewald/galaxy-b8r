@@ -1,3 +1,5 @@
+'use strict';
+
 // standard clamp function -- clamps a value into a range
 Math.clamp = function(a, min, max){
 	return a < min ? min : ( a > max ? max : a );
@@ -6,13 +8,13 @@ Math.clamp = function(a, min, max){
 // linear interpolation from a to b by parameter t
 Math.lerp = function(a, b, t) {
   return a * (1 - t) + b * t;
-}
+};
 
 // dumb ass roman numeral generator for naming planets after their star
-window.romanNumeral = function( n ){
+const romanNumeral = n => {
 	var units = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"];
 	
-	if( n == 0 ){
+	if( !n ){
 	    return "";
 	} else if( n < 0 || n >= 20 ){
 		return n;
@@ -21,7 +23,9 @@ window.romanNumeral = function( n ){
 	} else {
 		return units[n-1];
 	}
-}
+};
+
+window.romanNumeral = romanNumeral;
 
 // capitalizes first character of a string
 String.prototype.capitalize = function(){
@@ -30,7 +34,7 @@ String.prototype.capitalize = function(){
 	} else {
 		return '';
 	}
-}
+};
 
 // renders an object / array as HTML
 Object.prototype.toHTML = function( recurse ){
@@ -52,7 +56,7 @@ Object.prototype.toHTML = function( recurse ){
 			case 'object':
 				if( recurse ){
 				    html += '<h4>' + label + '</h4>\n';
-					if( this[key] != null ){
+					if( this[key] !== null ){
 						var obj = this[key];
 						if( obj.length !== undefined ){
 							html += obj.toHTML( recurse );
@@ -65,6 +69,6 @@ Object.prototype.toHTML = function( recurse ){
 		}
 	}
 	return html;
-}
+};
 
 Array.prototype.toHTML = Object.prototype.toHTML;
