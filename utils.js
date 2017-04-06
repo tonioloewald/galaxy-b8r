@@ -23,19 +23,6 @@ window.romanNumeral = function( n ){
 	}
 }
 
-// check to see if there's a builtin function that does this
-Array.prototype.insertAt = function( where, what ){
-	if( where < 0 ){
-		this.splice(0,0,what);
-	} else {
-		var tail = this.splice( where );
-		this.push( what )
-		for( var i = 0; i < tail.length; i++ ){
-			this.push( tail[i] );
-		}
-	}
-}
-
 // capitalizes first character of a string
 String.prototype.capitalize = function(){
 	if( this ){
