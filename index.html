@@ -3,38 +3,48 @@
   <head>
     <meta charset="utf-8">
     <title>Galaxy Generator</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="apple-touch-icon" href="images/icon.png"/>
     <link href="galaxy.css" type="text/css" rel="stylesheet">
   </head>at
-  <body data-event="mouseup,touchend:galaxy-controls.deselect">
+  <body data-event="click:galaxy-controls.deselect">
     <div class="fullscreen">
       <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
         <line 
           class="y-position"
           x1="-500" y1="-1000" x2="2500" y2="-1000"
-          stroke-width="1" stroke="white"
+          stroke-width="1" stroke="rgba(255,255,255,0.25)"
         />
         <line 
           class="x-position"
           x1="-1000" y1="-500" x2="-1000" y2="2500"
-          stroke-width="1" stroke="white"
+          stroke-width="1" stroke="rgba(255,255,255,0.25)"
+        />
+        <circle
+          data-list="galaxy.stars" cx="1" cy="1" r="22"
+          fill="rgba(255,255,255,0.02)"
+          data-bind="attr(cx)=._x;attr(cy)=._y" 
+          data-event="click:galaxy-controls.pick_star"
         />
         <circle
           class="star"
           data-list="galaxy.stars" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;attr(title)=.name" 
-          data-event="mouseup,touchend:galaxy-controls.pick_star"
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color" 
+          data-event="click:galaxy-controls.pick_star"
         />
       </svg>
     </div>
     <div class="toolbar" >
-      <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
+      <input 
+        style="border: 1px solid white; border-radius: 50px; padding: 4px 16px; box-sizing: border-box; height: 28px; margin: 4px;"
+        placeholder="search"
+      >
+      <button data-bind="enabled_if=settings.zoom" data-event="click:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_unless(_undefined_)=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+      <button data-bind="enabled_if=settings.star" data-event="click:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
@@ -50,15 +60,15 @@
         <input title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
-      <button data-event="mouseup,touchend:galaxy-controls.update">
+      <button data-event="click:galaxy-controls.update">
         <span class="hidden">Generate</span>
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
     </div>
-    <div class="list stars" style="left: 0" data-event="touchend,mouseup:_b8r_.stopEvent">
+    <div class="list stars" style="left: 0" data-event="click:_b8r_.stopEvent">
       <div 
         data-list="galaxy.stars"
-        data-event="mouseup,touchend:galaxy-controls.pick_star"
+        data-event="click:galaxy-controls.pick_star"
       >
         <span data-bind="text=.name"></span>
       </div>
@@ -71,7 +81,7 @@
             stroke-width="4"
             stroke-opacity="0.5"
             data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
-            data-event="mouseup,touchend:galaxy-controls.pick_star"
+            data-event="click:galaxy-controls.pick_star"
           />
         </svg>
         <div class="data" style="padding: 2px 8px;">
@@ -108,7 +118,7 @@
           <circle
             cx="275000" cy="27500" r="2"
             data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
-            data-event="mouseup,touchend:galaxy-controls.pick_star"
+            data-event="click:galaxy-controls.pick_star"
           />
         </svg>
       </div>
@@ -119,6 +129,7 @@
       'use strict';
       require.autoPreload().then(() => {
         const b8r = require('https://rawgit.com/tonioloewald/bindinator.js/master/source/b8r.js');
+        window.b8r = b8r;
         require('utils.js');
         const galaxy = require('galaxy.js');
         
@@ -188,7 +199,7 @@
         const galaxyFrame = b8r.findOne('.galaxy-frame');
         function render() {
           const {seed, count, star, zoom} = window.location.hash ? 
-                                            JSON.parse(window.location.hash.substr(1)) : 
+                                            JSON.parse(unescape(window.location.hash.substr(1))) : 
                                             b8r.getByPath('settings');
           if(
             last_render_params.seed !== seed || 

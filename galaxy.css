@@ -90,7 +90,7 @@ form {
 .star:hover {
   stroke: white;
   stroke-opacity: 0.5;
-  stroke-width: 8;
+  stroke-width: 2;
 }
 
 .star:hover .name {
@@ -101,8 +101,8 @@ form {
 
 .star.current {
   stroke: white;
-  stroke-opacity: 0.5;
-  stroke-width: 16;
+  stroke-opacity: 1;
+  stroke-width: 2;
 }
 
 .toolbar {
