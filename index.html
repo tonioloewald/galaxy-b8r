@@ -3,30 +3,36 @@
   <head>
     <meta charset="utf-8">
     <title>Galaxy Generator</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="apple-touch-icon" href="images/icon.png"/>
     <link href="galaxy.css" type="text/css" rel="stylesheet">
   </head>at
-  <body data-event="mouseup,touchend:galaxy-controls.deselect">
+  <body data-event="click:galaxy-controls.deselect">
     <div class="fullscreen">
       <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
         <line 
           class="y-position"
           x1="-500" y1="-1000" x2="2500" y2="-1000"
-          stroke-width="1" stroke="white"
+          stroke-width="1" stroke="rgba(255,255,255,0.25)"
         />
         <line 
           class="x-position"
           x1="-1000" y1="-500" x2="-1000" y2="2500"
-          stroke-width="1" stroke="white"
+          stroke-width="1" stroke="rgba(255,255,255,0.25)"
+        />
+        <circle
+          data-list="galaxy.stars:name" cx="1" cy="1" r="22"
+          fill="rgba(255,255,255,0.02)"
+          data-bind="attr(cx)=._x;attr(cy)=._y;class(filtered)=.filtered" 
+          data-event="click:galaxy-controls.pick_star"
         />
         <circle
           class="star"
-          data-list="galaxy.stars" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;attr(title)=.name" 
-          data-event="mouseup,touchend:galaxy-controls.pick_star"
+          data-list="galaxy.stars:name" cx="1" cy="1" r="2"
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;class(filtered)=.filtered" 
+          data-event="click:galaxy-controls.pick_star"
         />
       </svg>
     </div>
@@ -34,7 +40,7 @@
       <input 
         placeholder="search"
         data-bind="value=settings.filter.search"
-        data-event="change:galaxy-controls.filter"
+        data-event="input,change:galaxy-controls.filter"
         style="box-sizing: border-box; height: 28px; padding: 4px 14px; margin: 4px; border-radius: 18px; outline: none;"
       >
       <select
@@ -48,10 +54,10 @@
         <option value=2>Survivable</option>
         <option value=1>Earthlike</option>
       </select>
-      <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
+      <button data-bind="enabled_if=settings.zoom" data-event="click:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+      <button data-bind="enabled_if=settings.star" data-event="click:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
@@ -67,17 +73,18 @@
         <input title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
-      <button data-event="mouseup,touchend:galaxy-controls.update">
+      <button data-event="click:galaxy-controls.update">
         <span class="hidden">Generate</span>
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
     </div>
-    <div class="list stars" style="left: 0" data-event="touchend,mouseup:_b8r_.stopEvent">
+    <div class="list stars" style="left: 0" data-event="click:_b8r_.stopEvent">
       <div 
-        data-list="galaxy.stars"
-        data-event="mouseup,touchend:galaxy-controls.pick_star"
+        data-list="galaxy.stars:name"
+        data-bind="hide_if=.filtered"
+        data-event="click:galaxy-controls.pick_star"
       >
-        <span data-bind="text=.name;hide_if=.filtered"></span>
+        <span data-bind="text=.name"></span>
       </div>
     </div>
     <div class="list system" style="display: none; right: 0;">
@@ -88,7 +95,7 @@
             stroke-width="4"
             stroke-opacity="0.5"
             data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
-            data-event="mouseup,touchend:galaxy-controls.pick_star"
+            data-event="click:galaxy-controls.pick_star"
           />
         </svg>
         <div class="data" style="padding: 2px 8px;">
@@ -125,7 +132,7 @@
           <circle
             cx="275000" cy="27500" r="2"
             data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
-            data-event="mouseup,touchend:galaxy-controls.pick_star"
+            data-event="click:galaxy-controls.pick_star"
           />
         </svg>
       </div>
@@ -198,7 +205,17 @@
         }
 
         const filter = b8r.debounce(() => {
-
+          const needle = b8r.get('settings.filter.search');
+          const habitability = b8r.get('settings.filter.habitability');
+          b8r.get('galaxy.stars').forEach(star => {
+            if (needle && star.name.indexOf(needle) === -1) {
+              b8r.set(`galaxy.stars[name=${star.name}].filtered`, true);
+            } else if (habitability < 5 && star.habitability() > habitability) {
+              b8r.set(`galaxy.stars[name=${star.name}].filtered`, true);
+            } else {
+              b8r.set(`galaxy.stars[name=${star.name}].filtered`, false);
+            }
+          });
         }, 1000);
         
         b8r.register('galaxy-controls', {update, pick_star, filter, deselect, zoomIn, zoomOut});
@@ -210,13 +227,16 @@
         const galaxyFrame = b8r.findOne('.galaxy-frame');
         function render() {
           const {seed, count, star, zoom} = window.location.hash ? 
-                                            JSON.parse(window.location.hash.substr(1)) : 
+                                            JSON.parse(unescape(window.location.hash.substr(1))) : 
                                             b8r.getByPath('settings');
           if(
             last_render_params.seed !== seed || 
             last_render_params.count !== count
           ) {
             b8r.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
+            if (b8r.get('settings.filter.search') || b8r.get('settings.filter.habitability') < 5) {
+              filter();
+            }
           }
           b8r.find('.current')
              .forEach(elt => elt.classList.remove('current'));

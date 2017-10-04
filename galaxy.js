@@ -49,15 +49,17 @@ function galaxy(seed, number_of_stars){
       y: Math.sin(theta) * r,
       z: pseudoRandom.gaussrandom( thickness * 0.5 )
     };
+
     stars.push(new Star( new_name, pseudoRandom.range(1,100000), position )  );
   }
   
-  stars.sort( function (a, b) { return a.name > b.name ? 1 : ( a.name < b.name ? -1 : 0 ); } );
+  stars.sort( (a, b) => a.name > b.name ? 1 : ( a.name < b.name ? -1 : 0 ) );
   
   stars.forEach(star => {
     const x = star.position.x * 1000 + 1000;
     const y = star.position.y * 1000 + 1000;
     const z = star.position.z * 1000 + 1000;
+    
     star._transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(0deg)`;
     star._detail = star.detail();
     var s = Math.log(star._detail.luminosity) + 8;
