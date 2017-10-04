@@ -30,11 +30,28 @@
         />
       </svg>
     </div>
-    <div class="toolbar" >
+    <div class="toolbar">
+      <input 
+        placeholder="search"
+        data-bind="value=settings.filter.search"
+        data-event="change:galaxy-controls.filter"
+        style="box-sizing: border-box; height: 28px; padding: 4px 14px; margin: 4px; border-radius: 18px; outline: none;"
+      >
+      <select
+        data-event="change:galaxy-controls.filter"
+        data-bind="value=settings.filter.habitability"
+        style="color: white; background: none; box-sizing: border-box; height: 28px; margin: 4px; border-radius: 18px; outline: none;"
+      >
+        <option value=5 selected>All</option>
+        <option value=4>Robot Accessible</option>
+        <option value=3>EVA Accessible</option>
+        <option value=2>Survivable</option>
+        <option value=1>Earthlike</option>
+      </select>
       <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_unless(_undefined_)=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
@@ -60,7 +77,7 @@
         data-list="galaxy.stars"
         data-event="mouseup,touchend:galaxy-controls.pick_star"
       >
-        <span data-bind="text=.name"></span>
+        <span data-bind="text=.name;hide_if=.filtered"></span>
       </div>
     </div>
     <div class="list system" style="display: none; right: 0;">
@@ -119,10 +136,11 @@
       'use strict';
       require.autoPreload().then(() => {
         const b8r = require('https://rawgit.com/tonioloewald/bindinator.js/master/source/b8r.js');
+        window.b8r = b8r;
         require('utils.js');
         const galaxy = require('galaxy.js');
         
-        b8r.register('settings', {count: 1000, seed: 1234});
+        b8r.register('settings', {count: 1000, seed: 1234, filter: {search: '', habitability: 5}});
         if (window.location.hash) {
           try {
             var hash = JSON.parse(window.location.hash.substr(1));
@@ -178,8 +196,12 @@
           }
           update();
         }
+
+        const filter = b8r.debounce(() => {
+
+        }, 1000);
         
-        b8r.register('galaxy-controls', {update, pick_star, deselect, zoomIn, zoomOut});
+        b8r.register('galaxy-controls', {update, pick_star, filter, deselect, zoomIn, zoomOut});
         
         const last_render_params = {};
         const xPos = b8r.findOne('.x-position');

@@ -75,11 +75,15 @@ form {
 }
 .star {
   position: absolute;
-  background: white;
   width: 4px;
   height: 4px;
   border-radius: 1000px;
   cursor: default;
+}
+
+.star .filtered {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .star .name {
