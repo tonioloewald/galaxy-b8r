@@ -23,15 +23,16 @@
           stroke-width="1" stroke="rgba(255,255,255,0.25)"
         />
         <circle
+          class="star-touch-target"
           data-list="galaxy.stars:name" cx="1" cy="1" r="22"
-          fill="rgba(255,255,255,0.02)"
+          fill="rgba(255,255,255,0.05)"
           data-bind="attr(cx)=._x;attr(cy)=._y;class(filtered)=.filtered" 
           data-event="mouseup,touchend:galaxy-controls.pick_star"
         />
         <circle
           class="star"
           data-list="galaxy.stars:name" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;class(current)=.current;class(filtered)=.filtered" 
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;method(galaxy-controls.star_fill)=.;class(current)=.current;class(filtered)=.filtered" 
           data-event="mouseup,touchend:galaxy-controls.pick_star"
         />
       </svg>
@@ -41,7 +42,7 @@
         placeholder="search"
         data-bind="value=settings.filter.search"
         data-event="input,change:galaxy-controls.filter"
-        style="box-sizing: border-box; height: 28px; padding: 4px 14px; margin: 4px; border-radius: 18px; outline: none;"
+        style="width: 120px; box-sizing: border-box; height: 28px; padding: 4px 14px; margin: 4px; border-radius: 18px; outline: none;"
       >
       <select
         data-event="change:galaxy-controls.filter"
@@ -49,31 +50,31 @@
         style="color: white; background: none; box-sizing: border-box; height: 28px; margin: 4px; border-radius: 18px; outline: none;"
       >
         <option value=5 selected>All</option>
-        <option value=4>Robot Accessible</option>
-        <option value=3>EVA Accessible</option>
+        <option value=4>Robot</option>
+        <option value=3>EVA</option>
         <option value=2>Survivable</option>
         <option value=1>Earthlike</option>
       </select>
-      <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
+      <button class="hide-if-narrow" data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
+      <button class="hide-if-narrow" data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
       <label>
         <svg class="icon"><use xlink:href="#icon-dice"></use></svg>
         <span class="hidden">Random Seed</span>
-        <input title="random seed" type="range" min=0 max=65535 data-bind="value=settings.seed" />
+        <input class="hide-if-narrow" title="random seed" type="range" min=0 max=65535 data-bind="value=settings.seed" />
         <input data-bind="value=settings.seed" style="display: inline-block; width: 4em">
       </label>
       <label>
         <svg class="icon"><use xlink:href="#icon-star-full"></use></svg>
         <span class="hidden">Number of Stars</span>
-        <input title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
+        <input class="hide-if-narrow" title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
-      <button data-event="mouseup,touchend:galaxy-controls.update">
+      <button class="hide-if-narrow" data-event="mouseup,touchend:galaxy-controls.update">
         <span class="hidden">Generate</span>
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
@@ -223,7 +224,7 @@
           const filter_slice = () => {
             const start = Date.now();
             for(; (filter_index < stars.length) && (Date.now() - start < 30); filter_index++) {
-              filter_star(stars[filter_index])
+              filter_star(stars[filter_index]);
             }
             if (filter_index < stars.length) {
               console.log(filter_index);
@@ -235,8 +236,16 @@
 
           filter_slice();
         }, 250);
+
+        const star_fill = (element, star) => {
+          let color = star._detail.template.color;
+          if (star.filtered) {
+            color = color.replace(/rgb/, 'rgba').replace(/\)/, ',0.25)');
+          }
+          element.setAttribute('fill', color);
+        };
         
-        b8r.register('galaxy-controls', {update, pick_star, filter, deselect, zoomIn, zoomOut});
+        b8r.register('galaxy-controls', {update, pick_star, star_fill, filter, deselect, zoomIn, zoomOut});
         
         const last_render_params = {};
         const xPos = b8r.findOne('.x-position');

@@ -82,8 +82,11 @@ form {
 }
 
 .filtered {
-  opacity: 0.25;
   pointer-events: none;
+}
+
+.star-touch-target.filtered {
+  display: none;
 }
 
 .star .name {
@@ -251,6 +254,12 @@ button .hidden {
   input, button {
     font-size: 24px;
     min-height: 40px;
+  }
+}
+
+@media (max-width: 800px) {
+  .hide-if-narrow {
+    display: none;
   }
 }
 
