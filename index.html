@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="images/icon.png"/>
     <link href="galaxy.css" type="text/css" rel="stylesheet">
   </head>at
-  <body data-event="click:galaxy-controls.deselect">
+  <body data-event="mouseup,touchend:galaxy-controls.deselect">
     <div class="fullscreen">
       <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
         <line 
@@ -26,13 +26,13 @@
           data-list="galaxy.stars:name" cx="1" cy="1" r="22"
           fill="rgba(255,255,255,0.02)"
           data-bind="attr(cx)=._x;attr(cy)=._y;class(filtered)=.filtered" 
-          data-event="click:galaxy-controls.pick_star"
+          data-event="mouseup,touchend:galaxy-controls.pick_star"
         />
         <circle
           class="star"
           data-list="galaxy.stars:name" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;class(filtered)=.filtered" 
-          data-event="click:galaxy-controls.pick_star"
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;attr(fill)=._detail.template.color;class(current)=.current;class(filtered)=.filtered" 
+          data-event="mouseup,touchend:galaxy-controls.pick_star"
         />
       </svg>
     </div>
@@ -54,10 +54,10 @@
         <option value=2>Survivable</option>
         <option value=1>Earthlike</option>
       </select>
-      <button data-bind="enabled_if=settings.zoom" data-event="click:galaxy-controls.zoomOut">
+      <button data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
         <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
       </button>
-      <button data-bind="enabled_if=settings.star" data-event="click:galaxy-controls.zoomIn">
+      <button data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
         <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
       </button>
       <div class="flexible-space"> </div>
@@ -73,16 +73,16 @@
         <input title="number of stars" type="range" min=500 max=2500 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
-      <button data-event="click:galaxy-controls.update">
+      <button data-event="mouseup,touchend:galaxy-controls.update">
         <span class="hidden">Generate</span>
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
     </div>
-    <div class="list stars" style="left: 0" data-event="click:_b8r_.stopEvent">
+    <div class="list stars" style="left: 0" data-event="mouseup,touchend:_b8r_.stopEvent">
       <div 
         data-list="galaxy.stars:name"
         data-bind="hide_if=.filtered"
-        data-event="click:galaxy-controls.pick_star"
+        data-event="mouseup,touchend:galaxy-controls.pick_star"
       >
         <span data-bind="text=.name"></span>
       </div>
@@ -95,7 +95,7 @@
             stroke-width="4"
             stroke-opacity="0.5"
             data-bind="attr(r)=system.star._r;attr(fill),attr(stroke)=system.star._detail.template.color" 
-            data-event="click:galaxy-controls.pick_star"
+            data-event="mouseup,touchend:galaxy-controls.pick_star"
           />
         </svg>
         <div class="data" style="padding: 2px 8px;">
@@ -132,14 +132,14 @@
           <circle
             cx="275000" cy="27500" r="2"
             data-bind="attr(r)=.radius;attr(HI)=.HI;attr(classification)=.classification;attr(atmosphere)=.atmosphere" 
-            data-event="click:galaxy-controls.pick_star"
+            data-event="mouseup,touchend:galaxy-controls.pick_star"
           />
         </svg>
       </div>
     </div>
     <script src="https://rawgit.com/tonioloewald/bindinator.js/master/lib/require.js"></script>
     <script>
-      /* global require, console */
+      /* global require, console, unescape */
       'use strict';
       require.autoPreload().then(() => {
         const b8r = require('https://rawgit.com/tonioloewald/bindinator.js/master/source/b8r.js');
@@ -205,18 +205,36 @@
         }
 
         const filter = b8r.debounce(() => {
+          let filter_index = 0;
           const needle = b8r.get('settings.filter.search');
           const habitability = b8r.get('settings.filter.habitability');
-          b8r.get('galaxy.stars').forEach(star => {
+          const stars = b8r.get('galaxy.stars');
+
+          const filter_star = star => {
             if (needle && star.name.indexOf(needle) === -1) {
-              b8r.set(`galaxy.stars[name=${star.name}].filtered`, true);
+              star.filtered = true;
             } else if (habitability < 5 && star.habitability() > habitability) {
-              b8r.set(`galaxy.stars[name=${star.name}].filtered`, true);
+              star.filtered = true;
             } else {
-              b8r.set(`galaxy.stars[name=${star.name}].filtered`, false);
+              star.filtered = false;
             }
-          });
-        }, 1000);
+          };
+
+          const filter_slice = () => {
+            const start = Date.now();
+            for(; (filter_index < stars.length) && (Date.now() - start < 30); filter_index++) {
+              filter_star(stars[filter_index])
+            }
+            if (filter_index < stars.length) {
+              console.log(filter_index);
+              requestAnimationFrame(filter_slice);
+            } else {
+              b8r.touch('galaxy.stars');
+            }
+          };
+
+          filter_slice();
+        }, 250);
         
         b8r.register('galaxy-controls', {update, pick_star, filter, deselect, zoomIn, zoomOut});
         
@@ -250,7 +268,7 @@
             const planets = _star.planetsDetail();
             console.log(_star, planets);
             b8r.register('system', {star: _star, planets});
-            b8r.find('[data-list-instance="galaxy.stars[' + star + ']"]')
+            b8r.find(`[data-list-instance="galaxy.stars[name=${_star.name}]"]`)
                .forEach(elt => {
                   elt.classList.add('current');
                   const y = elt.offsetTop - elt.parentElement.scrollTop;
