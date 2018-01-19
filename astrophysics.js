@@ -1,6 +1,8 @@
 /*
 	Rough and ready astrophysics data and functions
 */
+/* global module */
+'use strict';
 
 // gravity (in Earth "g"s) from radius and density
 function gravity( radius, density ){
@@ -80,11 +82,7 @@ var starTypeData = {
 */
 
 // Convenience factory function for creating a fixed-value function
-function fixed_value( val ){
-	return function(){
-		return val;
-	}
-}
+const fixed_value = val => (() => val);
 
 var atmosphereData = {
   Breathable: {albedo: 0.2, density: 1},
@@ -94,18 +92,18 @@ var atmosphereData = {
   Toxic: {albedo: 0.4, density: 1.5},
   Trace: {albedo: 0.05, density: 0.1},
   Crushing: {albedo: 0.8, density: 100},
-}
+};
 
 function HI( insolation, radius, density, hydrographics, atmosphere ){
   const g = gravity(radius, density).toFixed(2);
   const {albedo} = atmosphereData[atmosphere];
   const tempK = blackbody( insolation, albedo + hydrographics * 0.002 ).toFixed(1);
-  const tempC = (tempK - 275.15).toFixed(1);
+  var tempC = (tempK - 275.15);
   var temp;
   if(tempC < -150) {
     temp = "frigid";
   } else if (tempC < -80) {
-    templ = "extremely cold";
+    temp = "extremely cold";
   } else if (tempC < -40) {
     temp = "very cold";
   } else if (tempC < -10) {
@@ -121,6 +119,7 @@ function HI( insolation, radius, density, hydrographics, atmosphere ){
   } else {
     temp = "inferno";
   }
+  tempC = tempC.toFixed(1);
   var data;
   if( atmosphere === "Breathable" && hydrographics > 0 && g < 1.25 && ['cold','hot','temperate'].indexOf(temp) > -1 ){
     data = {HI: 1, description: 'earthlike'};
@@ -145,7 +144,6 @@ var planetTypeData = [
 			return Math.clamp(pnrg.realRange(-50, 150 - Math.abs(tempK - 270)) * g - Math.abs( density - 5.5 ) * 10, 0, 100).toFixed(0);
 		},
 		atmosphere: function( pnrg, insolation, radius, density, hydrographics ){
-			var g = gravity( radius, density );
 			if( hydrographics > 0 && insolation > 0.25 && insolation < 2 ){
 				return pnrg.pick(['Breathable', 'Filterable', 'Inert', 'Toxic', 'Corrosive', 'Trace'], [1,2,2,1,1,1]);
 			} else {
@@ -172,11 +170,9 @@ var planetTypeData = [
 	}
 ];
 
-if (module) {
-  module.exports = {
-    gravity,
-    blackbody,
-    starTypeData,
-    planetTypeData
-  }
-}
+module.exports = {
+  gravity,
+  blackbody,
+  starTypeData,
+  planetTypeData
+};

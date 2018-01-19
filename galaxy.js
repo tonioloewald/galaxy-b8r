@@ -3,7 +3,7 @@
 
 function galaxy(seed, number_of_stars){
   const PRNG = require('prng.js');
-  const badwords = require('badwords.js');
+  const {isBadWord} = require('badwords.js');
   const random_name = require('random_name.js');
   const Star = require('star.js');
   const spiral_arms = 2,
@@ -31,7 +31,7 @@ function galaxy(seed, number_of_stars){
       new_name = random_name( pseudoRandom, number_of_syllables );
       if( names.indexOf( new_name ) >= 0 ){
         rejects.duplicates++;
-      } else if ( badwords.indexOf( new_name ) >= 0 || badwords.indexContains( new_name ) >= 0) {
+      } else if ( isBadWord(new_name) ) {
         rejects.badwords++;
       } else {
         break;
@@ -86,6 +86,4 @@ function galaxy(seed, number_of_stars){
   return {stars};
 }
 
-if (module) {
-  module.exports = galaxy;
-}
+module.exports = galaxy;
