@@ -35,7 +35,7 @@
         <circle
           class="star"
           data-list="galaxy.stars" cx="1" cy="1" r="2"
-          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;method(galaxy-controls.star_fill)=.;class(current)=.current;class(filtered)=.filtered" 
+          data-bind="attr(cx)=._x;attr(cy)=._y;attr(r)=._r;method(galaxy-controls.star_fill)=._detail.template.color,.filtered;class(current)=.current;class(filtered)=.filtered" 
           data-event="mouseup,touchend:galaxy-controls.pick_star"
         />
       </svg>
@@ -241,9 +241,8 @@
           update();
         }, 250);
 
-        const star_fill = (element, star) => {
-          let color = star._detail.template.color;
-          if (star.filtered) {
+        const star_fill = (element, [color, filtered]) => {
+          if (filtered) {
             color = color.replace(/rgb/, 'rgba').replace(/\)/, ',0.25)');
           }
           element.setAttribute('fill', color);
