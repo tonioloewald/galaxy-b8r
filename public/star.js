@@ -1,9 +1,7 @@
-/* global module, require, romanNumeral */
-'use strict';
-
-const {starTypeData} = require('astrophysics.js');
-const Planet = require('planet.js');
-const PRNG = require('prng.js');
+import {romanNumeral} from './utils.js';
+import {starTypeData} from './astrophysics.js';
+import {Planet} from './planet.js';
+import {PRNG} from './prng.js';
 
 class Star {
   constructor ( name, seed, position ){
@@ -70,4 +68,4 @@ class Star {
   }
 }
 
-module.exports = Star;
+export {Star}

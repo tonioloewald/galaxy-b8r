@@ -1,8 +1,8 @@
 /* global module, require */
 'use strict';
 
-const {gravity, blackbody, planetTypeData} = require('astrophysics.js');
-const PRNG = require('prng.js');
+import {gravity, blackbody, planetTypeData} from './astrophysics.js';
+import {PRNG} from './prng.js';
 
 class Planet {
 	constructor ( name, seed, orbitalRadius, insolation ) {
@@ -43,4 +43,4 @@ class Planet {
 	}
 }
 
-module.exports = Planet;
+export {Planet}

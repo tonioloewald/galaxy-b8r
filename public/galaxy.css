@@ -74,36 +74,17 @@ form {
   overflow: hidden;
 }
 .star {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 1000px;
   cursor: default;
 }
 
 .filtered {
-  pointer-events: none;
-}
-
-.star-touch-target.filtered {
-  display: none;
-}
-
-.star .name {
-  display: none;
-  color: white;
+  display:none;
 }
 
 .star:hover {
   stroke: white;
   stroke-opacity: 0.5;
   stroke-width: 2;
-}
-
-.star:hover .name {
-  position: absolute;
-  top: 24px;
-  display: block;
 }
 
 .star.current {
@@ -165,16 +146,14 @@ form {
 .list > * {
   cursor: default;
   padding: 2px 8px;
+  font-weight: 300;
 }
 
 .list > :hover {
-  border-left: 2px solid rgba(255,255,255,0.5);
-  padding-left: 6px;
+  background-color: rgba(255,255,255,0.1);
 }
 
 .list > .current {
-  border-left: 2px solid white;
-  font-weight: 500;
   background-color: rgba(255,255,255,0.75);
   color: black;
 }

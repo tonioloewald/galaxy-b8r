@@ -1,5 +1,3 @@
-'use strict';
-
 // standard clamp function -- clamps a value into a range
 Math.clamp = function(a, min, max){
 	return a < min ? min : ( a > max ? max : a );
@@ -11,7 +9,7 @@ Math.lerp = function(a, b, t) {
 };
 
 // dumb ass roman numeral generator for naming planets after their star
-const romanNumeral = n => {
+export const romanNumeral = n => {
 	var units = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"];
 	
 	if( !n ){
@@ -24,8 +22,6 @@ const romanNumeral = n => {
 		return units[n-1];
 	}
 };
-
-window.romanNumeral = romanNumeral;
 
 // capitalizes first character of a string
 String.prototype.capitalize = function(){

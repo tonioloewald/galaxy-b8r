@@ -1,0 +1,50 @@
+[
+  {
+    "name": "imperial homeworld",
+    "type": "settlement",
+    "population": [1e+6, 1e+11],
+    "spawns": ["hitech", "major city", "major spacefleet"]
+  },
+  {
+    "name": "major homeworld",
+    "type": "settlement",
+    "population": [1e+6, 1e+10],
+    "spawns": ["hitech", "city", "spacefleet"]
+  },
+  {
+    "name": "homeworld",
+    "type": "settlement",
+    "population": [1e+6, 1e+10],
+    "spawns": ["town"]
+  },
+  {
+    "name": "colony",
+    "type": "settlement",
+    "population": [1e+2, 1e+6],
+    "spawns": ["tech", "village"]
+  },
+  {
+    "name": "base",
+    "type": "settlement",
+    "population": [1e+2, 1e+4],
+    "spawns": ["complex"]
+  },
+  {
+    "name": "fort",
+    "type": "settlement",
+    "population": [10, 1e+3],
+    "spawns": ["complex"]
+  },
+  {
+    "name": "outpost",
+    "type": "settlement",
+    "population": [1, 1e+3],
+    "spawns": ["building"]
+  },
+  {
+    "name": "depot",
+    "type": "settlement",
+    "population": [0, 1e+2],
+    "spawns": ["building"]
+  }
+]

@@ -1,11 +1,9 @@
-/* global module, require, console */
-'use strict';
+import {PRNG} from './prng.js';
+import {isBadWord} from './badwords.js';
+import {random_name} from './random_name.js';
+import {Star} from './star.js';
 
 function galaxy(seed, number_of_stars){
-  const PRNG = require('prng.js');
-  const {isBadWord} = require('badwords.js');
-  const random_name = require('random_name.js');
-  const Star = require('star.js');
   const spiral_arms = 2,
         spiral_angle_degrees = 360,
         min_radius = 0.05, 
@@ -86,4 +84,4 @@ function galaxy(seed, number_of_stars){
   return {stars};
 }
 
-module.exports = galaxy;
+export {galaxy};

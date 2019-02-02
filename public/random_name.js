@@ -9,10 +9,9 @@ var name_parts = {
 };
 
 function random_name( PRNG, number_of_syllables, allow_second_name, allow_secondary ){
-  var syllables = [],
-    name;
+  let syllables = [], name, suffix;
   syllables.push( PRNG.pick(name_parts.prefix) );
-  for( var j = 2; j < number_of_syllables; j++ ){
+  for( let j = 2; j < number_of_syllables; j++ ){
     syllables.push( PRNG.pick(name_parts.middle) );
   }
   syllables.push( PRNG.pick(name_parts.suffix) );
@@ -38,6 +37,4 @@ function random_name( PRNG, number_of_syllables, allow_second_name, allow_second
   return name.capitalize();
 }
 
-if (module) {
-  module.exports = random_name;
-}
+export {random_name};

@@ -1,8 +1,6 @@
 /*
 	Rough and ready astrophysics data and functions
 */
-/* global module */
-'use strict';
 
 // gravity (in Earth "g"s) from radius and density
 function gravity( radius, density ){
@@ -22,7 +20,7 @@ function blackbody( insolation, albedo ){
 	=====
 */
 
-var starTypeData = {
+const starTypeData = {
 	"O": {
 		luminosity: 50000,
 		color: 'rgb(255,192,255)',
@@ -170,9 +168,9 @@ var planetTypeData = [
 	}
 ];
 
-module.exports = {
+export {
   gravity,
   blackbody,
   starTypeData,
-  planetTypeData
+  planetTypeData,
 };

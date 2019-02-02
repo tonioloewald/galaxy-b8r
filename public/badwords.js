@@ -14,7 +14,7 @@ const hasBadWord = function( s ){
 
 const isBadWord = s => badwords.indexOf( s ) > -1 || hasBadWord( s );
 
-module.exports = {
+export {
   badwords,
   isBadWord,
 };

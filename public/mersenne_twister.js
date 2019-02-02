@@ -65,7 +65,7 @@
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 */
 
-var MersenneTwister = function(seed) {
+export const MersenneTwister = function(seed) {
   if (seed == undefined) {
     seed = new Date().getTime();
   } 
@@ -80,10 +80,6 @@ var MersenneTwister = function(seed) {
   this.mti=this.N+1; /* mti==N+1 means mt[N] is not initialized */
 
   this.init_genrand(seed);
-}
-
-if (module) {
-  module.exports = MersenneTwister;
 }
  
 /* initializes mt[N] with a seed */

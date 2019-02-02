@@ -1,17 +1,10 @@
-/* global module, require */
-'use strict';
-
-const MersenneTwister = require('mersenne_twister.js');
+import {MersenneTwister} from './mersenne_twister.js';
 
 // Pseudo-random number generator -- convenience wrapper for Mersenne Twister
-function PRNG( seed ){
+export function PRNG( seed ){
 	this.mt = new MersenneTwister(seed);
 	
 	return this;
-}
-
-if (module) {
-  module.exports = PRNG;
 }
 
 PRNG.prototype.value = function(){
