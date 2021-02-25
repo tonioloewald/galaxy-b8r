@@ -273,7 +273,7 @@
           last_render_params.seed !== seed || 
           last_render_params.count !== count
         ) {
-          b8r.register('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
+          b8r.set('galaxy', galaxy(parseInt(seed, 10), parseInt(count, 10)));
           if (b8r.get('settings.filter.search') || b8r.get('settings.filter.habitability') < 5) {
             filter();
           }
@@ -289,7 +289,7 @@
           const _star = b8r.getByPath('galaxy', 'stars')[star];
           const planets = _star.planetsDetail();
           console.log(_star, planets);
-          b8r.register('system', {star: _star, planets});
+          b8r.set('system', {star: _star, planets});
           b8r.find(`[data-list-instance="galaxy.stars[name=${_star.name}]"]`)
              .forEach(elt => {
                 elt.classList.add('current');
