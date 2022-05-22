@@ -29,7 +29,7 @@
           class="star-touch-target"
           data-list="galaxy.stars:_auto_"
           cx="1" cy="1" r="22"
-          fill="rgba(255,255,255,0.05)"
+          fill="rgba(255,255,255,0.02)"
           data-bind="
             attr(cx)=._x;
             attr(cy)=._y;
@@ -161,15 +161,16 @@
       import {galaxy} from './galaxy.js';
       
       window.b8r = b8r;
-      b8r.register('settings', {count: 1000, seed: 1234, filter: {search: '', habitability: 5}});
+      const settings = {count: 1000, seed: 1234, filter: {search: '', habitability: 5}};
       if (window.location.hash) {
         try {
-          var hash = JSON.parse(window.location.hash.substr(1));
+          var hash = JSON.parse(unescape(window.location.hash.substr(1)));
           for (var key in hash) {
-            b8r.setByPath('settings', key, hash[key]);
+            settings[key] = hash[key]
           }
         } catch(e){}
       }
+      b8r.reg.settings = settings
       
       function update () {
         window.location.hash = JSON.stringify(b8r.getByPath('settings'));

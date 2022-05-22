@@ -3,16 +3,26 @@ import {isBadWord} from './badwords.js';
 import {random_name} from './random_name.js';
 import {Star} from './star.js';
 
-function galaxy(seed, number_of_stars){
-  const spiral_arms = 2,
-        spiral_angle_degrees = 360,
-        min_radius = 0.05, 
-        max_radius = 0.9,
-        thickness = 0.1,
-        scatter_theta = Math.PI / spiral_arms * 0.2,
+const DEFAULTS = {
+  spiral_arms: 2,
+  spiral_angle_degrees: 300,
+  min_radius: 0.05,
+  max_radius: 0.9,
+  thickness: 0.1,
+}
+
+function galaxy(seed, number_of_stars, options = {}){
+  const {
+    spiral_arms,
+    spiral_angle_degrees,
+    min_radius, 
+    max_radius,
+    thickness,
+  } = Object.assign(options, DEFAULTS)
+  const scatter_theta = Math.PI / spiral_arms * 0.2,
         scatter_radius = min_radius * 0.4,
         spiral_b = spiral_angle_degrees / Math.PI * min_radius / max_radius,
-        start = (new Date()).getTime(),
+        start = Date.now(),
         names = [],
         rejects = { badwords: 0, duplicates: 0 },
         stars = [];
@@ -61,7 +71,7 @@ function galaxy(seed, number_of_stars){
     star._transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(0deg)`;
     star._detail = star.detail();
     var s = Math.log(star._detail.luminosity) + 8;
-    s = Math.max(Math.min(s, 20), 2);
+    s = Math.max(Math.min(s, 20), 2) * 0.5;
     const color = star._detail.template.color;
     star._x = x.toFixed(1);
     star._y = y.toFixed(1);
