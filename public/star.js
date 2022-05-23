@@ -5,11 +5,11 @@ import { PRNG } from './prng.js'
 
 class Star {
   constructor (name, seed, position) {
-  	this.name = name
-  	this.seed = seed
-  	this.position = position
+    this.name = name
+    this.seed = seed
+    this.position = position
 
-  	return this
+    return this
   }
 
   detail () {
@@ -63,7 +63,9 @@ class Star {
     let output = ''
     output += '<h3>' + this.name.capitalize() + '</h3>\n'
     output += this.detail().toHTML(true)
-    this.planets().forEach(planet => output += '<div class="subrecord">' + planet.description() + '</div>')
+    for (const planet of this.planets()) {
+      output += '<div class="subrecord">' + planet.description() + '</div>'
+    }
     return output
   }
 }

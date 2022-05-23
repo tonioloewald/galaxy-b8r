@@ -33,7 +33,7 @@ function galaxy (seed, numberOfStars, options = {}) {
 
   for (i = 0; i < numberOfStars; i++) {
     const numberOfSyllables = Math.floor(pseudoRandom.value() * 2 + 2)
-    var newName
+    let newName
 
     while (true) {
       newName = randomName(pseudoRandom, numberOfSyllables)
