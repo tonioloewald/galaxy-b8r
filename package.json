@@ -1,0 +1,29 @@
+{
+  "name": "galaxy-b8r",
+  "version": "1.0.0",
+  "description": "procedural galaxy generator",
+  "main": "public/galaxy.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonioloewald/galaxy-b8r.git"
+  },
+  "keywords": [
+    "javascript",
+    "astronomy",
+    "games",
+    "simulations"
+  ],
+  "author": "Tonio Loewald",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tonioloewald/galaxy-b8r/issues"
+  },
+  "homepage": "https://github.com/tonioloewald/galaxy-b8r#readme",
+  "devDependencies": {
+    "standard": "^17.0.0"
+  }
+}

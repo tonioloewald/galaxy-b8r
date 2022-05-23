@@ -52,6 +52,7 @@
         />
       </svg>
     </div>
+    <canvas class="fullscreen"></canvas>
     <div class="toolbar">
       <input 
         placeholder="search"
@@ -347,7 +348,7 @@
         requestAnimationFrame(iterate);
       }
       
-      render();  
+      render();
       
       window.addEventListener('hashchange', render);
     </script>
