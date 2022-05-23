@@ -7,15 +7,15 @@
   If you want to use this as a substitute for Math.random(), use the random()
   method like so:
 
-  var m = new MersenneTwister();
-  var randomNumber = m.random();
+  let m = new MersenneTwister();
+  let randomNumber = m.random();
 
   You can also call the other genrand_{foo}() methods on the instance.
 
   If you want to use a specific seed in order to get a repeatable random
   sequence, pass an integer into the constructor:
 
-  var m = new MersenneTwister(123);
+  let m = new MersenneTwister(123);
 
   and that will always produce the same random sequence.
 
@@ -27,7 +27,7 @@
    Coded by Takuji Nishimura and Makoto Matsumoto.
 
    Before using, initialize the state by using init_genrand(seed)
-   or init_by_array(init_key, key_length).
+   or init_by_array(initKey, keyLength).
 
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
    All rights reserved.
@@ -65,7 +65,7 @@
 */
 
 export const MersenneTwister = function (seed) {
-  if (seed == undefined) {
+  if (seed === undefined) {
     seed = new Date().getTime()
   }
   /* Period parameters */
@@ -85,7 +85,7 @@ export const MersenneTwister = function (seed) {
 MersenneTwister.prototype.init_genrand = function (s) {
   this.mt[0] = s >>> 0
   for (this.mti = 1; this.mti < this.N; this.mti++) {
-    var s = this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >>> 30)
+    const s = this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >>> 30)
     this.mt[this.mti] = (((((s & 0xffff0000) >>> 16) * 1812433253) << 16) + (s & 0x0000ffff) * 1812433253) +
   this.mti
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
@@ -98,25 +98,25 @@ MersenneTwister.prototype.init_genrand = function (s) {
 }
 
 /* initialize by an array with array-length */
-/* init_key is the array for initializing keys */
-/* key_length is its length */
+/* initKey is the array for initializing keys */
+/* keyLength is its length */
 /* slight change for C++, 2004/2/26 */
-MersenneTwister.prototype.init_by_array = function (init_key, key_length) {
+MersenneTwister.prototype.init_by_array = function (initKey, keyLength) {
   let i, j, k
   this.init_genrand(19650218)
   i = 1; j = 0
-  k = (this.N > key_length ? this.N : key_length)
+  k = (this.N > keyLength ? this.N : keyLength)
   for (; k; k--) {
-    var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
+    const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
     this.mt[i] = (this.mt[i] ^ (((((s & 0xffff0000) >>> 16) * 1664525) << 16) + ((s & 0x0000ffff) * 1664525))) +
-      init_key[j] + j /* non linear */
+      initKey[j] + j /* non linear */
     this.mt[i] >>>= 0 /* for WORDSIZE > 32 machines */
     i++; j++
     if (i >= this.N) { this.mt[0] = this.mt[this.N - 1]; i = 1 }
-    if (j >= key_length) j = 0
+    if (j >= keyLength) j = 0
   }
   for (k = this.N - 1; k; k--) {
-    var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
+    const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
     this.mt[i] = (this.mt[i] ^ (((((s & 0xffff0000) >>> 16) * 1566083941) << 16) + (s & 0x0000ffff) * 1566083941)) -
       i /* non linear */
     this.mt[i] >>>= 0 /* for WORDSIZE > 32 machines */
@@ -130,14 +130,15 @@ MersenneTwister.prototype.init_by_array = function (init_key, key_length) {
 /* generates a random number on [0,0xffffffff]-interval */
 MersenneTwister.prototype.genrand_int32 = function () {
   let y
-  const mag01 = new Array(0x0, this.MATRIX_A)
+  const mag01 = [0x0, this.MATRIX_A]
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
   if (this.mti >= this.N) { /* generate N words at one time */
     let kk
 
-    if (this.mti == this.N + 1) /* if init_genrand() has not been called, */
-    { this.init_genrand(5489) } /* a default initial seed is used */
+    if (this.mti === this.N + 1) { /* if init_genrand() has not been called, */
+      this.init_genrand(5489) /* a default initial seed is used */
+    }
 
     for (kk = 0; kk < this.N - this.M; kk++) {
       y = (this.mt[kk] & this.UPPER_MASK) | (this.mt[kk + 1] & this.LOWER_MASK)

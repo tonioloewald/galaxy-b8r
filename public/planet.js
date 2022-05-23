@@ -1,4 +1,3 @@
-/* global module, require */
 'use strict'
 
 import { gravity, blackbody, planetTypeData } from './astrophysics.js'
@@ -17,13 +16,13 @@ class Planet {
   detail () {
     const pseudoRandom = new PRNG(this.seed)
     const detail = {}
-    let template
+
     detail.name = this.name
     detail.orbitalRadius = this.orbitalRadius.toFixed(2)
     detail.insolation = this.insolation.toFixed(2)
     detail.blackbodyK = blackbody(detail.insolation)
 
-    template = pseudoRandom.pick(planetTypeData, [detail.insolation * 100, 10, 1])
+    const template = pseudoRandom.pick(planetTypeData, [detail.insolation * 100, 10, 1])
 
     detail.classification = template.classification
     detail.radius = pseudoRandom.range(template.radius[0], template.radius[1])

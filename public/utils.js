@@ -13,7 +13,7 @@ export const romanNumeral = n => {
   const units = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix']
 
   if (!n) {
-	    return ''
+    return ''
   } else if (n < 0 || n >= 20) {
     return n
   } else if (n >= 10) {
@@ -51,7 +51,7 @@ Object.prototype.toHTML = function (recurse) {
         break
       case 'object':
         if (recurse) {
-				    html += '<h4>' + label + '</h4>\n'
+          html += '<h4>' + label + '</h4>\n'
           if (this[key] !== null) {
             const obj = this[key]
             if (obj.length !== undefined) {

@@ -9,14 +9,15 @@ const nameParts = {
 }
 
 function randomName (PRNG, numberOfSyllables, allowSecondName, allowSecondary) {
-  const syllables = []; let name; let suffix
+  const syllables = []
+  let name
   syllables.push(PRNG.pick(nameParts.prefix))
   for (let j = 2; j < numberOfSyllables; j++) {
     syllables.push(PRNG.pick(nameParts.middle))
   }
   syllables.push(PRNG.pick(nameParts.suffix))
   name = syllables.join('')
-  suffix = PRNG.pick(['', 'first-name', 'second-name', 'secondary'], [8, 1, 1, 4])
+  const suffix = PRNG.pick(['', 'first-name', 'second-name', 'secondary'], [8, 1, 1, 4])
   switch (suffix) {
     case 'first-name':
       if (allowSecondName !== false) {

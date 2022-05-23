@@ -1,5 +1,5 @@
 /*
-	Rough and ready astrophysics data and functions
+  Rough and ready astrophysics data and functions
 */
 
 // gravity (in Earth "g"s) from radius and density
@@ -16,8 +16,8 @@ function blackbody (insolation, albedo) {
 }
 
 /*
-	Stars
-	=====
+  Stars
+  =====
 */
 
 const starTypeData = {
@@ -64,23 +64,23 @@ const starTypeData = {
 }
 
 /*
-	Planets
-	=======
+  Planets
+  =======
 
-	radius --> km (Earth = 6357)
-	density --> g/cc (Earth = 5.52)
-	hydrographics --> percentage of planet covered in water
+  radius --> km (Earth = 6357)
+  density --> g/cc (Earth = 5.52)
+  hydrographics --> percentage of planet covered in water
 
-	HI --> Habitability Index
-	1  --> Earthlike
-	2  --> Survivable
-	3  --> EVA possible
-	4  --> Robot accessible
-	5  --> Inimical
+  HI --> Habitability Index
+  1  --> Earthlike
+  2  --> Survivable
+  3  --> EVA possible
+  4  --> Robot accessible
+  5  --> Inimical
 */
 
 // Convenience factory function for creating a fixed-value function
-const fixed_value = val => () => val
+const fixedValue = val => () => val
 
 const atmosphereData = {
   Breathable: { albedo: 0.2, density: 1 },
@@ -154,16 +154,16 @@ const planetTypeData = [
     classification: 'gas giant',
     radius: [15000, 120000],
     density: [0.6, 2.0],
-    hydrographics: fixed_value(0),
-    atmosphere: fixed_value('Crushing'),
+    hydrographics: fixedValue(0),
+    atmosphere: fixedValue('Crushing'),
     HI
   },
   {
     classification: 'brown dwarf',
     radius: [120000, 250000],
     density: [0.6, 2.0],
-    hydrographics: fixed_value(0),
-    atmosphere: fixed_value('Crushing'),
+    hydrographics: fixedValue(0),
+    atmosphere: fixedValue('Crushing'),
     HI
   }
 ]

@@ -1,4 +1,4 @@
-import { MersenneTwister } from './mersenne_twister.js'
+import { MersenneTwister } from './mersenne-twister.js'
 
 // Pseudo-random number generator -- convenience wrapper for Mersenne Twister
 export function PRNG (seed) {
@@ -25,7 +25,7 @@ PRNG.prototype.realRange = function (min, max, skewFunction) {
 
 PRNG.prototype.gaussrandom = function (dev) {
 /*
-	Box Muller transform per Knuth
+  Box Muller transform per Knuth
 */
   let X
   let context = this.gaussrandom.context
