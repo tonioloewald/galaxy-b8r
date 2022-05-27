@@ -4,11 +4,11 @@ import { randomName } from './random-name.js'
 import { Star } from './star.js'
 
 const DEFAULTS = {
-  spiralArms: 2,
-  spiralAngleDegrees: 300,
-  minRadius: 0.05,
+  spiralArms: 4,
+  spiralAngleDegrees: 240,
+  minRadius: 0.04,
   maxRadius: 0.9,
-  thickness: 0.1
+  thickness: 0.06
 }
 
 function galaxy (seed, numberOfStars, options = {}) {
@@ -52,11 +52,11 @@ function galaxy (seed, numberOfStars, options = {}) {
     r += pseudoRandom.gaussrandom(scatterRadius)
     // assign to a spiral arm
     theta += pseudoRandom.range(0, spiralArms - 1) * Math.PI * 2 / spiralArms
-    position = {
-      x: Math.cos(theta) * r,
-      y: Math.sin(theta) * r,
-      z: pseudoRandom.gaussrandom(thickness * 0.5)
-    }
+
+    const x = Math.cos(theta) * r
+    const y = Math.sin(theta) * r
+    const z = pseudoRandom.gaussrandom(thickness * 0.5 * Math.sqrt(1 - Math.sqrt(x * x + y * y)))
+    position = { x, y, z }
 
     stars.push(new Star(newName, pseudoRandom.range(1, 100000), position))
   }

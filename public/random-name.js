@@ -1,6 +1,8 @@
 /*
   Pieces of star and similar names designed to allow random fabrication of plausible star names -- seems to work well!
 */
+import { capitalize } from './utils.js'
+
 const nameParts = {
   prefix: ['a', 'aeg', 'ai', 'alf', 'alph', 'amn', 'an', 'and', 'apt', 'arct', 'ard', 'ath', 'aur', 'b', 'bell', 'bet', 'bor', 'c', 'call', 'can', 'canc', 'cap', 'ceph', 'ch', 'chl', 'cr', 'cz', 'delt', 'drac', 'e', 'eps', 'f', 'fom', 'g', 'gamm', 'gall', 'gat', 'gemi', 'gn', 'gr', 'h', 'heph', 'her', 'holl', 'i', 'in', 'ind', 'ir', 'j', 'k', 'kn', 'l', 'lep', 'lin', 'lov', 'm', 'malth', 'mar', 'med', 'mir', 'mirc', 'n', 'nept', 'o', 'or', 'pers', 'p', 'ph', 'plei', 'plut', 'pn', 'poll', 'pr', 'ps', 'pt', 'pyr', 'q', 'qu', 'r', 'rig', 's', 'sag', 'sc', 'sir', 'str', 't', 'taur', 'tell', 'th', 'tn', 'trop', 'ts', 'u', 'ull', 'ult', 'ur', 'v', 'veg', 'vesp', 'vr', 'w', 'wh', 'wr', 'x', 'xz', 'y', 'z', 'z'],
   middle: ['acl', 'ac', 'ad', 'aedr', 'agg', 'al', 'alh', 'alr', 'alt', 'am', 'an', 'apr', 'aqu', 'ar', 'ath', 'cul', 'e', 'ec', 'ed', 'ef', 'egg', 'elg', 'em', 'en', 'eph', 'er', 'et', 'i', 'iat', 'ib', 'ic', 'id', 'ig', 'il', 'ir', 'isc', 'ist', 'itt', 'od', 'of', 'om', 'on', 'oph', 'opt', 'orp', 'om', 'oth', 'ue', 'ulp', 'ulph', 'ur', 'und', 'us', 'ut', 'uu'],
@@ -21,12 +23,12 @@ function randomName (PRNG, numberOfSyllables, allowSecondName, allowSecondary) {
   switch (suffix) {
     case 'first-name':
       if (allowSecondName !== false) {
-        name = randomName(PRNG, PRNG.range(2, numberOfSyllables), false, false).capitalize() + ' ' + name
+        name = capitalize(randomName(PRNG, PRNG.range(2, numberOfSyllables), false, false)) + ' ' + name
       }
       break
     case 'second-name':
       if (allowSecondName !== false) {
-        name = name + ' ' + randomName(PRNG, PRNG.range(2, numberOfSyllables), false).capitalize()
+        name = name + ' ' + capitalize(randomName(PRNG, PRNG.range(2, numberOfSyllables), false))
       }
       break
     case 'secondary':
@@ -35,7 +37,7 @@ function randomName (PRNG, numberOfSyllables, allowSecondName, allowSecondary) {
       }
       break
   }
-  return name.capitalize()
+  return capitalize(name)
 }
 
 export { randomName }

@@ -1,6 +1,7 @@
 'use strict'
 
 import { gravity, blackbody, planetTypeData } from './astrophysics.js'
+import { capitalize, objToHTML } from './utils.js'
 import { PRNG } from './prng.js'
 
 class Planet {
@@ -36,8 +37,8 @@ class Planet {
 
   description () {
     let output = ''
-    output += '<h3>' + this.name.capitalize() + '</h3>\n'
-    output += this.detail().toHTML()
+    output += '<h3>' + capitalize(this.name) + '</h3>\n'
+    output += objToHTML(this.detail())
     return output
   }
 }

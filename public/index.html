@@ -10,48 +10,14 @@
     <link href="galaxy.css" type="text/css" rel="stylesheet">
   </head>
   <body>
-    <div
-      class="fullscreen"
-      data-event="mouseup,touchend:galaxy-controls.deselect"
-    >
-      <svg class="galaxy-frame" style="width: 100%; height: 100%; transition: 0.5s;" viewBox="0 0 2000 2000" xmlns="http://www.w3.org/2000/svg">
-        <line 
-          class="y-position"
-          x1="-500" y1="-1000" x2="2500" y2="-1000"
-          stroke-width="1" stroke="rgba(255,255,255,0.25)"
-        />
-        <line 
-          class="x-position"
-          x1="-1000" y1="-500" x2="-1000" y2="2500"
-          stroke-width="1" stroke="rgba(255,255,255,0.25)"
-        />
-        <circle
-          class="star-touch-target"
-          data-list="galaxy.stars:_auto_"
-          cx="1" cy="1" r="22"
-          fill="rgba(255,255,255,0.02)"
-          data-bind="
-            attr(cx)=._x;
-            attr(cy)=._y;
-            class(filtered)=.filtered" 
-          data-event="mouseup,touchend:galaxy-controls.pickStar"
-        />
-        <circle
-          class="star"
-          data-list="galaxy.stars:_auto_"
-          cx="1" cy="1" r="2"
-          data-bind="
-            attr(cx)=._x;
-            attr(cy)=._y;
-            attr(r)=._r;
-            method(galaxy-controls.starFill)=._detail.template.color,.filtered;
-            class(current)=.current;
-            class(filtered)=.filtered;
-          " 
-          data-event="mouseup,touchend:galaxy-controls.pickStar"
-        />
-      </svg>
-    </div>
+    <b8r-component 
+        class="fullscreen" 
+        name="babylon" 
+        data-event="
+            ready:app.buildGalaxy
+            pick:galaxy-controls.pickStar3d
+        "
+    ></b8r-component>
     <div class="toolbar">
       <input 
         placeholder="search"
@@ -70,12 +36,6 @@
         <option value=2>Survivable</option>
         <option value=1>Earthlike</option>
       </select>
-      <button class="hide-if-narrow" data-bind="enabled_if=settings.zoom" data-event="mouseup,touchend:galaxy-controls.zoomOut">
-        <svg class="icon"><use xlink:href="#icon-zoom-out"></use></svg>
-      </button>
-      <button class="hide-if-narrow" data-bind="enabled_if=settings.star" data-event="mouseup,touchend:galaxy-controls.zoomIn">
-        <svg class="icon"><use xlink:href="#icon-zoom-in"></use></svg>
-      </button>
       <div class="flexible-space"> </div>
       <label>
         <svg class="icon"><use xlink:href="#icon-dice"></use></svg>
@@ -86,7 +46,7 @@
       <label>
         <svg class="icon"><use xlink:href="#icon-star-full"></use></svg>
         <span class="hidden">Number of Stars</span>
-        <input class="hide-if-narrow" title="number of stars" type="range" min=500 max=5000 data-bind="value=settings.count" />
+        <input class="hide-if-narrow" title="number of stars" type="range" min=1000 max=25000 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
       <button class="hide-if-narrow" data-event="mouseup,touchend:galaxy-controls.update">
@@ -97,13 +57,14 @@
     <div class="list stars" style="left: 0" data-event="mouseup,touchend:_b8r_.stopEvent">
       <div 
         data-list="galaxy.stars:name"
-        data-bind="hide_if=.filtered"
+        data-bind="hide_if=.filtered;app.isCurrent=system"
         data-event="mouseup,touchend:galaxy-controls.pickStar"
       >
         <span data-bind="text=.name"></span>
       </div>
     </div>
-    <div class="list system" style="display: none; right: 0;">
+    <div class="list system" data-bind="show_if=system.star" style="display: none; right: 0; width: 320px">
+      <button data-event="click:galaxy-controls.closeSystem" style="position: absolute; right:5px; top: 5px;">&times;</button>
       <div style="display: flex; padding: 0; border: 0;">
         <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
           <circle
@@ -164,14 +125,6 @@
 <symbol id="icon-spinner11" viewBox="0 0 32 32">
 <title>spinner11</title>
 <path fill="white" class="path1" d="M32 12h-12l4.485-4.485c-2.267-2.266-5.28-3.515-8.485-3.515s-6.219 1.248-8.485 3.515c-2.266 2.267-3.515 5.28-3.515 8.485s1.248 6.219 3.515 8.485c2.267 2.266 5.28 3.515 8.485 3.515s6.219-1.248 8.485-3.515c0.189-0.189 0.371-0.384 0.546-0.583l3.010 2.634c-2.933 3.349-7.239 5.464-12.041 5.464-8.837 0-16-7.163-16-16s7.163-16 16-16c4.418 0 8.418 1.791 11.313 4.687l4.687-4.687v12z"></path>
-</symbol>
-<symbol id="icon-zoom-in" viewBox="0 0 32 32">
-<title>zoom-in</title>
-<path fill="white" class="path1" d="M31.008 27.231l-7.58-6.447c-0.784-0.705-1.622-1.029-2.299-0.998 1.789-2.096 2.87-4.815 2.87-7.787 0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12c2.972 0 5.691-1.081 7.787-2.87-0.031 0.677 0.293 1.515 0.998 2.299l6.447 7.58c1.104 1.226 2.907 1.33 4.007 0.23s0.997-2.903-0.23-4.007zM12 20c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8zM14 6h-4v4h-4v4h4v4h4v-4h4v-4h-4z"></path>
-</symbol>
-<symbol id="icon-zoom-out" viewBox="0 0 32 32">
-<title>zoom-out</title>
-<path fill="white" class="path1" d="M31.008 27.231l-7.58-6.447c-0.784-0.705-1.622-1.029-2.299-0.998 1.789-2.096 2.87-4.815 2.87-7.787 0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12c2.972 0 5.691-1.081 7.787-2.87-0.031 0.677 0.293 1.515 0.998 2.299l6.447 7.58c1.104 1.226 2.907 1.33 4.007 0.23s0.997-2.903-0.23-4.007zM12 20c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8zM6 10h12v4h-12z"></path>
 </symbol>
 <symbol id="icon-star-full" viewBox="0 0 32 32">
 <title>star-full</title>

@@ -1,4 +1,4 @@
-import { romanNumeral } from './utils.js'
+import { romanNumeral, capitalize, objToHTML } from './utils.js'
 import { starTypeData } from './astrophysics.js'
 import { Planet } from './planet.js'
 import { PRNG } from './prng.js'
@@ -41,7 +41,7 @@ class Star {
 
     for (let i = 0; i < detail.numberOfPlanets; i++) {
       r += i / totalWeight * pseudoRandom.realRange(0.5, 1) * (radiusMax - radiusMin)
-      planets.push(new Planet(this.name.capitalize() + '-' + romanNumeral(i + 1), pseudoRandom.range(0, 100000), r, detail.luminosity / Math.pow(r, 2)))
+      planets.push(new Planet(capitalize(this.name) + '-' + romanNumeral(i + 1), pseudoRandom.range(0, 100000), r, detail.luminosity / Math.pow(r, 2)))
     }
 
     return planets
@@ -61,8 +61,8 @@ class Star {
 
   description () {
     let output = ''
-    output += '<h3>' + this.name.capitalize() + '</h3>\n'
-    output += this.detail().toHTML(true)
+    output += '<h3>' + capitalize(this.name) + '</h3>\n'
+    output += objToHTML(this.detail(), true)
     for (const planet of this.planets()) {
       output += '<div class="subrecord">' + planet.description() + '</div>'
     }

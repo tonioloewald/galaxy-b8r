@@ -24,40 +24,40 @@ export const romanNumeral = n => {
 }
 
 // capitalizes first character of a string
-String.prototype.capitalize = function () {
-  if (this) {
-    return this.substr(0, 1).toUpperCase() + this.substr(1)
+export function capitalize (s) {
+  if (s) {
+    return s.substr(0, 1).toUpperCase() + s.substr(1)
   } else {
     return ''
   }
 }
 
 // renders an object / array as HTML
-Object.prototype.toHTML = function (recurse) {
+export function objToHTML (obj, recurse) {
   let html = ''
-  for (const key in this) {
-    const label = key.replace(/([a-z])([A-Z])/g, '$1 $2').capitalize()
+  for (const key in obj) {
+    const label = capitalize(key.replace(/([a-z])([A-Z])/g, '$1 $2'))
 
-    switch (typeof (this[key])) {
+    switch (typeof (obj[key])) {
       case 'string':
-        html += '<b>' + label + '</b>: ' + this[key] + '<br/>\n'
+        html += '<b>' + label + '</b>: ' + obj[key] + '<br/>\n'
         break
       case 'number':
-        if (this[key] % 1 === 0) {
-          html += '<b>' + label + '</b>: ' + this[key] + '<br/>\n'
+        if (obj[key] % 1 === 0) {
+          html += '<b>' + label + '</b>: ' + obj[key] + '<br/>\n'
         } else {
-          html += '<b>' + label + '</b>: ' + this[key].toFixed(2) + '<br/>\n'
+          html += '<b>' + label + '</b>: ' + obj[key].toFixed(2) + '<br/>\n'
         }
         break
       case 'object':
         if (recurse) {
           html += '<h4>' + label + '</h4>\n'
-          if (this[key] !== null) {
-            const obj = this[key]
-            if (obj.length !== undefined) {
-              html += obj.toHTML(recurse)
+          if (obj[key] !== null) {
+            const value = obj[key]
+            if (value.length !== undefined) {
+              html += objToHTML(value, recurse)
             } else {
-              html += '<div class="subrecord">' + obj.toHTML(recurse) + '</div>'
+              html += '<div class="subrecord">' + objToHTML(value, recurse) + '</div>'
             }
           }
         }
@@ -66,5 +66,3 @@ Object.prototype.toHTML = function (recurse) {
   }
   return html
 }
-
-Array.prototype.toHTML = Object.prototype.toHTML
