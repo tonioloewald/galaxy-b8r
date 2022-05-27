@@ -18,50 +18,80 @@ function blackbody (insolation, albedo) {
 /*
   Stars
   =====
+
+  lifespan = mass (in solar masses) ^ -2.5 * 1e+10
+
+  stellar orbit period is ~200M earth years (obviously varies with distance from core, eccentricity)
+  age of galaxy 13.6B years
+  
 */
 
 const starTypeData = {
   O: {
-    luminosity: 50000,
+    // O6
+    luminosity: 250000,
     color: 'rgb(255,192,255)',
     rgb: [255, 192, 255],
-    planets: [0, 3]
+    planets: [0, 3],
+    mass: 50,
+    lifespan: 5.6e+5,
+    inSpiralArm: 0.9,
   },
   B: {
-    luminosity: 15000,
+    // B5
+    luminosity: 800,
     color: 'rgb(192,160,255)',
     rgb: [192, 160, 255],
-    planets: [1, 5]
+    planets: [1, 5],
+    mass: 6.5,
+    lifespan: 9.3e+7,
+    inSpiralArm: 0.9,
   },
   A: {
-    luminosity: 25,
+    // B5
+    luminosity: 20,
     color: 'rgb(128,192,255)',
     rgb: [128, 192, 255],
-    planets: [1, 7]
+    planets: [1, 7],
+    mass: 2.1,
+    lifespan: 1e+9,
+    inSpiralArm: 0.5,
   },
   F: {
     luminosity: 2.5,
     color: 'rgb(160,255,128)',
     rgb: [160, 255, 128],
-    planets: [1, 11]
+    planets: [1, 11],
+    mass: 1.3,
+    lifespan: 5.1e+9,
+    inSpiralArm: 0.4,
   },
   G: {
-    luminosity: 1,
+    luminosity: 0.79,
     color: 'rgb(255,255,64)',
     rgb: [255, 255, 64],
-    planets: [1, 19]
+    planets: [1, 19],
+    mass: 0.79,
+    lifespan: 1.2e+10,
+    inSpiralArm: 0.3,
   },
   K: {
-    luminosity: 0.25,
+    luminosity: 0.16,
     color: 'rgb(255,192,64)',
     rgb: [255, 192, 64],
-    planets: [1, 9]
+    planets: [1, 9],
+    mass: 0.69,
+    lifespan: 2.5e+10,
+    inSpiralArm: 0.25,
   },
   M: {
-    luminosity: 0.05,
+    luminosity: 0.0027,
     color: 'rgb(255,64,0)',
     rgb: [255, 64, 0],
-    planets: [1, 5]
+    planets: [1, 5],
+    mass: 0.15,
+    lifespan: 1.1e+12,
+    inSpiralArm: 0.1,
   },
   'black hole': {
     luminosity: 100000,

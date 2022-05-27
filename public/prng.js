@@ -15,6 +15,10 @@ PRNG.prototype.range = function (min, max) {
   return Math.floor(this.value() * (max - min + 1) + min)
 }
 
+PRNG.prototype.probability = function(p) {
+  return this.value() < p
+}
+
 PRNG.prototype.realRange = function (min, max, skewFunction) {
   let v = this.value()
   if (typeof skewFunction === 'function') {

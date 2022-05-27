@@ -149,7 +149,7 @@ b8r.reg.app = {
       SPS.dispose()
     }
     SPS = new BABYLON.SolidParticleSystem('stars', scene, { isPickable: true })
-    const sphere = BABYLON.MeshBuilder.CreateSphere('s', { diameter: 0.2, segments: 4 })
+    const sphere = BABYLON.MeshBuilder.CreateSphere('s', { diameter: 0.3, segments: 4 })
     SPS.addShape(sphere, stars.length)
     sphere.dispose() // dispose of original model sphere
 

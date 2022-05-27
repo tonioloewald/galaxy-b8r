@@ -7,31 +7,39 @@ class Star {
   constructor (name, seed, position) {
     this.name = name
     this.seed = seed
-    this.position = position
+    this.position = position || {x: 0, y: 0, z: 0}
 
     return this
   }
 
-  detail () {
-    const pseudoRandom = new PRNG(this.seed)
-    const detail = {}
-    // actual frequency
-    // spectralClass = pseudoRandom.pick(["O","B","A","F","G","K","M"], [0.0001,0.2,1,3,8,12,76]),
-    const spectralClass = pseudoRandom.pick(['O', 'B', 'A', 'F', 'G', 'K', 'M'], [0.0001, 0.2, 1, 3, 8, 12, 20])
-    const spectralIndex = pseudoRandom.range(0, 9)
-    const stellarTemplate = starTypeData[spectralClass]
+  get detail () {
+    if (!this._detail) {
+      const pseudoRandom = new PRNG(this.seed)
+      const detail = {}
+      // actual frequency
+      // spectralClass = pseudoRandom.pick(["O","B","A","F","G","K","M"], [0.0001,0.2,1,3,8,12,76]),
+      const spectralClass = pseudoRandom.pick(['O', 'B', 'A', 'F', 'G', 'K', 'M'], [0.0001, 0.2, 1, 3, 8, 12, 20])
+      const spectralIndex = pseudoRandom.range(0, 9)
+      const stellarTemplate = starTypeData[spectralClass]
 
-    detail.spectralType = spectralClass + spectralIndex
-    detail.luminosity = stellarTemplate.luminosity * (4 / (spectralIndex + 2))
-    detail.numberOfPlanets = pseudoRandom.range(stellarTemplate.planets[0], stellarTemplate.planets[1])
-    detail.planetSeed = pseudoRandom.range(0, 1000000)
-    detail.template = stellarTemplate
+      detail.spectralType = spectralClass + spectralIndex
+      
+      // TODO replace with better formulae/data
+      detail.luminosity = stellarTemplate.luminosity * 3 / (spectralIndex + 2)
+      detail.mass = stellarTemplate.mass * 5 / (spectralIndex + 2)
 
-    return detail
+      detail.numberOfPlanets = pseudoRandom.range(stellarTemplate.planets[0], stellarTemplate.planets[1])
+      detail.planetSeed = pseudoRandom.range(0, 1000000)
+      detail.template = stellarTemplate
+      detail.inSpiralArm = pseudoRandom.probability(stellarTemplate.inSpiralArm)
+      this._detail = detail
+    }
+
+    return this._detail
   }
 
   planets () {
-    const detail = this.detail()
+    const {detail} = this
     const planets = []
     const pseudoRandom = new PRNG(detail.planetSeed)
     const radiusMin = 0.4 * pseudoRandom.realRange(0.5, 2)
