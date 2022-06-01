@@ -4,6 +4,8 @@
 <b8r-component path="../components/b3d.js"></b8r-component>
 */
 
+import '../node_modules/babylonjs/babylon.max.js'
+
 export default {
   css: `
   ._component_ {
@@ -30,9 +32,6 @@ export default {
 </button>
 `,
   async initialValue ({ b8r, component, findOne, get, set }) {
-    const { viaTag } = await import('https://rawgit.com/tonioloewald/bindinator.js/master/lib/scripts.js')
-    const { BABYLON } = await viaTag('https://cdn.babylonjs.com/babylon.max.js')
-    await viaTag('https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js')
     const canvas = findOne('canvas')
     const engine = new BABYLON.Engine(canvas, true)
     const scene = new BABYLON.Scene(engine)
@@ -40,10 +39,10 @@ export default {
 
     // Adding an Arc Rotate Camera
     const camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 3, 80, BABYLON.Vector3.Zero(), scene)
-    camera.lowerRadiusLimit = 3
+    camera.lowerRadiusLimit = 1
     camera.upperRadiusLimit = 120
     camera.lowerBetaLimit = Math.PI * 0.05
-    camera.upperBetaLimit = Math.PI * 0.48
+    camera.upperBetaLimit = Math.PI * 0.95
     scene.activeCamera.attachControl(canvas, true)
 
     // const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -58,7 +57,7 @@ export default {
     }
     */
 
-    scene.onPointerDown = scene.onPointerDown = (evt, pickResult) => {
+    scene.onPointerUp = scene.onPointerDown = (evt, pickResult) => {
       set({ pickResult })
       b8r.trigger('pick', component)
     }

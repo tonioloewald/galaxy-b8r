@@ -139,12 +139,32 @@ form {
 
 .list {
   position: fixed; 
-  top: 40px;
-  bottom: 0;
-  background: rgba(0,0,0,0.5); 
+  top: 49px;
+  left: 10px;
+  bottom: 10px;
+  border: 2px solid #888;
+  background: #0008; 
   color: white;
   overflow-y: scroll; 
   overflow-x: hidden;
+  border-radius: 10px;
+}
+
+.list.system {
+  left: calc(50% + 10px);
+  overflow: initial;
+}
+
+.list.system::after {
+  content: ' ';
+  position: absolute;
+  display: block;
+  height: 1px;
+  width: 1px;
+  left: -23px;
+  top: calc(50% - 30px);
+  border: 10px solid #888;
+  border-color: transparent #888 transparent transparent;
 }
 
 .list > * {
@@ -258,4 +278,35 @@ button .hidden {
   div, canvas {
     max-width: 768px;
   }
+}
+
+/* scrollbar */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: transparent;
+}
+
+:hover::-webkit-scrollbar-track {
+  background: #0002;
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background: #fff4;
+}
+
+:hover::-webkit-scrollbar-thumb:window-inactive {
+  background: #fff2;
 }

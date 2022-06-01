@@ -6,7 +6,7 @@ import { Star } from './star.js'
 const DEFAULTS = {
   spiralArms: 4,
   spiralAngleDegrees: 240,
-  minRadius: 0.03,
+  minRadius: 0.02,
   maxRadius: 0.9,
   thickness: 0.06
 }
@@ -57,6 +57,7 @@ function galaxy (seed, numberOfStars, options = {}) {
       x = Math.cos(theta) * r
       y = Math.sin(theta) * r
     } else {
+      r *= pseudoRandom.realRange(1, 1.1)
       const theta = pseudoRandom.realRange(0, Math.PI * 2)
       x = Math.cos(theta) * r
       y = Math.sin(theta) * r
@@ -78,6 +79,7 @@ function galaxy (seed, numberOfStars, options = {}) {
     star._transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(0deg)`
     let s = Math.log(star.detail.luminosity) + 4
     s = Math.max(Math.min(s, 20), 2) * 0.5
+    star.scale = s/5
     const color = star.detail.template.color
     star._x = x.toFixed(1)
     star._y = y.toFixed(1)

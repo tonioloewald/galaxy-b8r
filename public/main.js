@@ -1,6 +1,6 @@
 /* global requestAnimationFrame */
 
-import b8r from 'https://rawgit.com/tonioloewald/bindinator.js/master/source/b8r.js'
+import b8r from '../node_modules/@tonioloewald/b8r/source/b8r.js'
 import { galaxy } from './galaxy.js'
 import babylon from './babylon.js'
 
@@ -99,7 +99,7 @@ const starFill = (element, [color, filtered]) => {
 }
 
 const closeSystem = () => {
-  b8r.reg.system = {}
+  b8r.reg.system = { star: null }
 }
 
 b8r.register('galaxy-controls', { update, pickStar, pickStar3d, closeSystem, starFill, filter, deselect })
@@ -133,6 +133,8 @@ b8r.reg.app = {
     const { scene } = data
     const { stars } = b8r.reg.galaxy
 
+    console.time('galaxy')
+
     if (!scene.getMeshByName('core')) {
       BABYLON.MeshBuilder.CreateSphere('core', { diameter: 0.5, segments: 8 }, scene)
       const core = BABYLON.MeshBuilder.CreateSphere('core-halo', { diameter: -0.6, segments: 8 }, scene)
@@ -164,10 +166,13 @@ b8r.reg.app = {
         particle.position.x = x * 50
         particle.position.y = z * 50
         particle.position.z = y * 50
-        particle.scale.x = particle.scale.y = particle.scale.z = stars[p]._r / 5
+        particle.scale.x = particle.scale.y = particle.scale.z = stars[p].scale
         particle.color = new BABYLON.Color3(...rgb)
+        stars[p]._particle = particle
       }
     }
+
+    console.timeEnd('galaxy')
 
     const starMat = new BABYLON.StandardMaterial('stars')
     starMat.emissiveColor = new BABYLON.Color3(0.75, 0.75, 0.75)
@@ -183,7 +188,7 @@ b8r.reg.app = {
 
     b8r.reg['galaxy-controls'].stars = {
       mesh,
-      SPS
+      SPS,
     }
   },
   isCurrent (elt, system) {

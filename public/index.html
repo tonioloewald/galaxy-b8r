@@ -46,7 +46,7 @@
       <label>
         <svg class="icon"><use xlink:href="#icon-star-full"></use></svg>
         <span class="hidden">Number of Stars</span>
-        <input class="hide-if-narrow" title="number of stars" type="range" min=1000 max=25000 data-bind="value=settings.count" />
+        <input class="hide-if-narrow" title="number of stars" type="range" min=1000 max=50000 data-bind="value=settings.count" />
         <input data-bind="value=settings.count" style="display: inline-block; width: 4em">
       </label>
       <button class="hide-if-narrow" data-event="mouseup,touchend:galaxy-controls.update">
@@ -54,7 +54,11 @@
         <svg title="Generate" class="icon"><use xlink:href="#icon-spinner11"></use></svg>
       </button>
     </div>
-    <div class="list stars" style="left: 0" data-event="mouseup,touchend:_b8r_.stopEvent">
+    <div 
+        class="list stars" 
+        data-bind="show_if=galaxy.stars.length"
+        data-event="mouseup,touchend:_b8r_.stopEvent"
+      >
       <div 
         data-list="galaxy.stars:name"
         data-bind="hide_if=.filtered;app.isCurrent=system"
@@ -63,9 +67,9 @@
         <span data-bind="text=.name"></span>
       </div>
     </div>
-    <div class="list system" data-bind="show_if=system.star" style="display: none; right: 0; width: 320px">
+    <div class="list system" data-bind="show_if=system.star" style="display: none; width: 320px">
       <button data-event="click:galaxy-controls.closeSystem" style="position: absolute; right:5px; top: 5px;">&times;</button>
-      <div style="display: flex; padding: 0; border: 0;">
+      <div style="display: flex; padding: 0; border: 0; border-radius: 10px; overflow: hidden;">
         <svg style="width: 320px; height: 128px;" viewBox="0 0 25 10" xmlns="http://www.w3.org/2000/svg">
           <circle
             cx="0" cy="0" r="2"
