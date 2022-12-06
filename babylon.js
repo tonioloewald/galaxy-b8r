@@ -4,8 +4,6 @@
 <b8r-component path="../components/b3d.js"></b8r-component>
 */
 
-import '../node_modules/babylonjs/babylon.max.js'
-
 export default {
   css: `
   ._component_ {

@@ -1,6 +1,6 @@
 /* global requestAnimationFrame */
 
-import b8r from '../node_modules/@tonioloewald/b8r/source/b8r.js'
+import b8r from 'https://cdn.jsdelivr.net/npm/b8rjs@0.6.8/dist/b8r.min.mjs'
 import { galaxy } from './galaxy.js'
 import babylon from './babylon.js'
 

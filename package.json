@@ -22,12 +22,5 @@
   "bugs": {
     "url": "https://github.com/tonioloewald/galaxy-b8r/issues"
   },
-  "homepage": "https://github.com/tonioloewald/galaxy-b8r#readme",
-  "devDependencies": {
-    "standard": "^17.0.0"
-  },
-  "dependencies": {
-    "babylonjs": "^5.8.2",
-    "@tonioloewald/b8r": "^0.5.27"
-  }
+  "homepage": "https://github.com/tonioloewald/galaxy-b8r#readme"
 }
