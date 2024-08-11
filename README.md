@@ -8,4 +8,4 @@ More recently, I modified it to use [b8r](https://bindinator.com) to manage
 the user interface bindings since it's both interesting and generates a lot
 of data without requiring a back-end.
 
-See it working via [rawgit](https://rawgit.com/tonioloewald/galaxy-b8r/master/)
+See it working via [github pages](https://tonioloewald.github.io/galaxy-b8r/)
